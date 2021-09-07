@@ -1,0 +1,237 @@
+## ****************************************************************************
+## ****************************************************************************
+## Copyright SoC Design Research Group, All rights reserved.    
+## Electronics and Telecommunications Research Institute (ETRI)
+##
+## THESE DOCUMENTS CONTAIN CONFIDENTIAL INFORMATION AND KNOWLEDGE 
+## WHICH IS THE PROPERTY OF ETRI. NO PART OF THIS PUBLICATION IS 
+## TO BE USED FOR ANY OTHER PURPOSE, AND THESE ARE NOT TO BE 
+## REPRODUCED, COPIED, DISCLOSED, TRANSMITTED, STORED IN A RETRIEVAL 
+## SYSTEM OR TRANSLATED INTO ANY OTHER HUMAN OR COMPUTER LANGUAGE, 
+## IN ANY FORM, BY ANY MEANS, IN WHOLE OR IN PART, WITHOUT THE 
+## COMPLETE PRIOR WRITTEN PERMISSION OF ETRI.
+## ****************************************************************************
+## 2019-05-17
+## Kyuseung Han (han@etri.re.kr)
+## ****************************************************************************
+## ****************************************************************************
+
+import argparse
+import os
+import sys
+import platform
+import datetime
+from pathlib import Path
+
+from configure_template import *
+from rvx_config import *
+from rvx_devkit import *
+from rvx_engine_log import *
+from rvx_mini_home import *
+
+debug_enable_filename = 'debug'
+
+if __name__ == '__main__':
+  # argument
+  parser = argparse.ArgumentParser(description='RVX MINI install')
+  parser.add_argument('-cmd', '-c', help='command')
+  parser.add_argument('-output', '-o', help='output file name')
+  args = parser.parse_args()
+
+  if getattr(sys, 'frozen', False):
+    self_file = Path(sys.executable)
+  elif __file__:
+    self_file = Path(__file__)
+  assert self_file.is_file(), self_file
+
+  home_path = Path(self_file).resolve().parent.parent
+  assert home_path.is_dir(), home_path
+
+  if not args.cmd:
+    assert 0
+  elif args.cmd=='install':
+    cmd_list = ('windows_binary', 'ssh', 'minicom', 'misc', 'config')
+  else:
+    cmd_list = [args.cmd]
+    if 'clean' in args.cmd:
+      remove_file(home_path/'.rvx_path_config')
+
+  engine_log = RvxEngineLog(home_path)
+  engine_log.add_new_job('logfile_setup', True, 'done')
+  engine_log.export_file()
+
+  config = RvxConfig(home_path)
+  devkit = RvxDevkit(config, args.output, engine_log)
+
+  for cmd in cmd_list:
+    if cmd=='install':
+      assert 0, 'wrong command {0}'.format(args.cmd)
+
+    elif cmd=='windows_binary':
+      if is_windows:
+        filename = 'windows_binary_2021-05-13.tar.gz'
+        output_dir = config.windows_binary_path
+        tar_file = output_dir / filename
+        download_is_required = False if tar_file.is_file() else True
+
+        if download_is_required:
+          print('Windows Binary: New Update')
+          remove_directory(output_dir)
+          output_dir.mkdir(parents=True)
+          link = f'http://link.etri.coreicc.net/{filename}'
+          download_url(link, output_file=tar_file)
+          extract_file(tar_file)
+        else:
+          print('Windows Binary: No Update')
+        path_list = os.environ.get('Path').split(';')
+        if str(output_dir) not in path_list:
+          execute_shell_cmd(f'setx Path \"%Path%;{output_dir}\"')
+    
+    elif cmd=='ssh':
+      if is_windows:
+        pass
+      elif is_centos:
+        execute_shell_cmd(make_cmd_sudo('yum install sshpass', devkit.get_sudo_passwd()), home_path)
+      elif is_ubuntu:
+        execute_shell_cmd(make_cmd_sudo('apt-get install sshpass', devkit.get_sudo_passwd()), home_path)
+      else:
+        assert 0
+
+    elif cmd=='minicom':
+      if is_windows:
+        pass
+      elif is_centos:
+        execute_shell_cmd(make_cmd_sudo('yum install minicom', devkit.get_sudo_passwd()), home_path)
+      elif is_ubuntu:
+        execute_shell_cmd(make_cmd_sudo('apt-get install minicom', devkit.get_sudo_passwd()), home_path)
+      else:
+        assert 0
+
+    elif cmd=='misc':
+      if is_linux:
+        pass
+
+    elif cmd=='config':
+      if is_linux:
+        configure_template_file(home_path / 'rvx_install' / 'rvx_mini.source', Path('.')/'source', (('RVX_MINI_HOME',str(home_path)),))
+      else:
+        execute_shell_cmd(f'setx RVX_MINI_HOME {home_path}')
+      line_list = []
+      if is_linux:
+        line_list.append('#!/bin/bash')
+      if (home_path/RvxMiniHome.read_only_tag).is_file():
+        line_list.append('git checkout .')
+      line_list.append('git pull origin master')
+      line_list.append('git submodule init')
+      line_list.append('git submodule update --force')
+      line_list.append('make reconfig_python')
+      line_list.append('make config')
+      if is_linux:
+        line_list.append('source ./source')
+      line_list.append('make after_update')
+      line_list.append('make check')
+      line_list.append('make sync')
+      if is_linux:
+        update_sciprt_file = home_path / 'update.sh'
+      else:
+        update_sciprt_file = home_path / 'update.bat'
+      update_sciprt_file.write_text('\n'.join(line_list))
+      if is_linux:
+        make_executable(update_sciprt_file)
+    
+    elif cmd=='enable_debug':
+      debug_enable_file = home_path / debug_enable_filename
+      if not debug_enable_file.is_file():
+        debug_enable_file.touch()
+
+    elif cmd=='disable_debug':
+      debug_enable_file = home_path / debug_enable_filename
+      remove_file(debug_enable_file)
+
+    elif cmd=='tool_config':
+      config.write_file()
+
+    elif cmd=='check_remote_log':
+      devkit.check_remote_log()
+    
+    elif cmd=='after_update':
+      pass
+
+    elif cmd=='sync':
+      mini_home = RvxMiniHome(devkit)
+      mini_home.sync()
+
+    elif cmd=='resync':
+      mini_home = RvxMiniHome(devkit)
+      mini_home.resync()
+
+    elif cmd=='sync_gui':
+      execute_shell_cmd('make gui', config.install_path)
+
+    elif cmd=='sync_ocd':
+      execute_shell_cmd('make ocd', config.install_path)
+
+    elif cmd=='clean':
+      mini_home = RvxMiniHome(devkit)
+      mini_home.clean()
+      if config.windows_binary_path:
+        remove_directory(config.windows_binary_path)
+      remove_directory(config.local_setup_path)
+
+    elif cmd=='distclean':
+      execute_shell_cmd('make clean', config.install_path)
+      mini_home = RvxMiniHome(devkit)
+      mini_home.clean()      
+      remove_directory(home_path/'platform')
+      execute_shell_cmd('git checkout .', home_path)
+
+    elif cmd=='read_only':
+      (home_path/RvxMiniHome.read_only_tag).touch()
+
+    elif cmd=='check':
+      print('\n## git check ##')
+      execute_shell_cmd('git --version', home_path)
+      print('\n## make check ##')
+      execute_shell_cmd('make --version', home_path)
+      print('\n## python check ##')
+      execute_shell_cmd('make check_python', home_path)
+      print('\n## python package check ##')
+      package_list = ('distro', 'numpy', 'cryptography', 'pyelftools', 'configparser')
+      for package in package_list:
+        result = run_shell_cmd(f'pip show {package}', asserts_when_error=False)
+        if result.returncode==0:
+          stdout = result.stdout.decode(encoding='cp949').replace('\r','')
+          print(stdout.split('\n')[0:2])
+        else:
+          assert 0, '\"make pip3\" and then \"make check\" again!'
+
+      if is_windows:
+        print('\n## windows binary check ##')
+        windows_binary_list = ('libusb-0-1-4.dll', 'libusb-1.0.dll', 'plink.exe', 'psftp.exe', 'putty.exe', 'zadig-2.5.exe')
+        for windows_binary in windows_binary_list:
+          windows_binary_path = config.windows_binary_path / windows_binary
+          if not windows_binary_path.is_file():
+            assert 0, '\"make windows_binary\" and then \"make check\" again!'
+      print('\n## ssh check ##')
+      if is_linux:
+        execute_shell_cmd('sshpass -V', home_path)
+      else:
+        plink_path = config.windows_binary_path / 'plink.exe'
+        execute_shell_cmd(f'{plink_path} --version', home_path)
+      print('\n## tar check ##')
+      execute_shell_cmd('tar --version', home_path)
+      print('\n## java check ##')
+      execute_shell_cmd('java -version', home_path)
+
+    else:
+      assert 0
+
+  if args.cmd.endswith('clean'):
+    engine_log.clean()
+  else:
+    if not args.cmd.endswith('sync'):
+      devkit.engine_log.add_new_job(args.cmd, True, 'done')
+    devkit.engine_log.export_file()
+    devkit.check_log(True)
+
+

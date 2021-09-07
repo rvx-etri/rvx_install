@@ -1,0 +1,3 @@
+#!/bin/bash
+
+export RVX_MINI_HOME="${RVX_MINI_HOME}"
