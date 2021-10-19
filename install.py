@@ -84,8 +84,13 @@ if __name__ == '__main__':
         else:
           print('Windows Binary: No Update')
         path_list = os.environ.get('Path').split(';')
+        new_path_list = []
         if str(output_dir) not in path_list:
-          execute_shell_cmd(f'setx Path \"%Path%;{output_dir}\"')
+          for path in path_list:
+            if path not in new_path_list:
+              new_path_list.append(path)
+          new_path_list.append(str(output_dir))
+          execute_shell_cmd('setx Path \"{0}\"'.format(';'.join(new_path_list)))
     
     elif cmd=='ssh':
       if is_windows:
@@ -198,7 +203,7 @@ if __name__ == '__main__':
       print('\n## python package check ##')
       package_list = ('distro', 'numpy', 'cryptography', 'pyelftools', 'configparser')
       for package in package_list:
-        result = run_shell_cmd(f'pip show {package}', asserts_when_error=False)
+        result = run_shell_cmd(f'{config.python3_cmd} -m pip show {package}', asserts_when_error=False)
         if result.returncode==0:
           stdout = result.stdout.decode(encoding='cp949').replace('\r','')
           print(stdout.split('\n')[0:2])
