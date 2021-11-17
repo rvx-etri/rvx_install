@@ -83,8 +83,11 @@ class RemoteHandler:
       run_shell_cmd(local_cmd, local_dir, stderr=subprocess.STDOUT)
     else:
       remote_cmd = f'get {remote_file}'
-      sshpass_cmd = 'psftp -pw {0} -P {1} {2}@{3} -batch'.format(self.passwd, self.ssh_port, self.username, self.ip_address)
-      local_cmd = f'echo \"{remote_cmd}\" | {sshpass_cmd}'
+      script_file = Path('sftp_script.sh')
+      script_file.write_text(remote_cmd)'
+
+      sshpass_cmd = 'psftp -pw {0} -P {1} {2}@{3} -b'.format(self.passwd, self.ssh_port, self.username, self.ip_address)
+      local_cmd = f'{sshpass_cmd} {script_file}'
       run_shell_cmd(local_cmd, local_dir, stderr=subprocess.STDOUT)
     return local_file
 
@@ -100,8 +103,11 @@ class RemoteHandler:
       run_shell_cmd(local_cmd, local_dir, stderr=subprocess.STDOUT)
     else:
       remote_cmd = f'put {filename} {remote_file}'
-      sshpass_cmd = 'psftp -pw {0} -P {1} {2}@{3} -batch'.format(self.passwd, self.ssh_port, self.username, self.ip_address)
-      local_cmd = f'echo {remote_cmd} | {sshpass_cmd}'
+      script_file = Path('sftp_script.sh')
+      script_file.write_text(remote_cmd)'
+
+      sshpass_cmd = 'psftp -pw {0} -P {1} {2}@{3} -b'.format(self.passwd, self.ssh_port, self.username, self.ip_address)
+      local_cmd = f'{sshpass_cmd} {script_file}'
       run_shell_cmd(local_cmd, local_dir, stderr=subprocess.STDOUT)
 
   def extract_tar_file(self, filename:str, remote_dir:str, local_dir:Path):
