@@ -90,7 +90,9 @@ if __name__ == '__main__':
             if path not in new_path_list:
               new_path_list.append(path)
           new_path_list.append(str(output_dir))
-          execute_shell_cmd('setx Path \"{0}\"'.format(';'.join(new_path_list)))
+          path_in_single_line = ';'.join(new_path_list))
+          assert len(path_in_single_line) >= 1024
+          execute_shell_cmd(f'setx Path \"{path_in_single_line}\"'
     
     elif cmd=='ssh':
       if is_windows:
