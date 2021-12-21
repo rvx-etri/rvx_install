@@ -61,7 +61,7 @@ if __name__ == '__main__':
   engine_log.export_file()
 
   config = RvxConfig(home_path)
-  devkit = RvxDevkit(config, args.output, engine_log)
+  devkit = RvxDevkit(config, args.output, engine_log, False)
 
   for cmd in cmd_list:
     if cmd=='install':

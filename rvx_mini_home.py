@@ -117,7 +117,7 @@ class RvxMiniHome():
     remove_directory(self.home_path / 'env')
     remove_directory(self.home_path / 'rvx_util')
     remove_directory(self.home_path / 'rvx_hwlib')
-    run_shell_cmd('git checkout --force ./rvx_hwlib', self.home_path, stderr=subprocess.STDOUT, asserts_when_error=False)
+    run_shell_cmd('git checkout --force ./rvx_hwlib', self.home_path, stderr=subprocess.DEVNULL, prints_when_error=False, asserts_when_error=False)
     remove_directory(self.home_path / 'rvx_install' / '__pycache__')
     remove_directory(self.devkit.config.local_setup_path)
 
