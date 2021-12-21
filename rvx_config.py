@@ -87,7 +87,7 @@ class RvxPathConfig(ConfigFileManager):
 class RvxToolConfig(ConfigFileManager):
   def __init__(self, file_path:Path):
     super().__init__('rvx_tool_config', file_path, None)
-    self.allowed_set = frozenset(('rtl_simulator','use_terminal_for_running_ocd','use_terminal_for_connecting_ocd','use_terminal_for_printf', 'smart_build'))
+    self.allowed_set = frozenset(('rtl_simulator','use_terminal_for_implementing_fpga','use_terminal_for_running_ocd','use_terminal_for_connecting_ocd','use_terminal_for_printf', 'smart_build'))
     if not self.check(self.allowed_set, exact=True):
       self.clear()
       assert self.check(self.allowed_set, exact=True)
@@ -99,6 +99,7 @@ class RvxToolConfig(ConfigFileManager):
       self.set_attr('rtl_simulator', 'xcelium')
     elif run_shell_cmd('ncsim -version', self.file_path.parent, prints_when_error=False, asserts_when_error=False).returncode==0:
       self.set_attr('rtl_simulator', 'ncsim')
+    self.set_attr('use_terminal_for_implementing_fpga', False)
     self.set_attr('use_terminal_for_running_ocd', True)
     self.set_attr('use_terminal_for_connecting_ocd', True)
     self.set_attr('use_terminal_for_printf', True)

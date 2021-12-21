@@ -17,6 +17,7 @@
 ## ****************************************************************************
 
 from pathlib import Path
+import import_util
 from os_util import *
 from re_util import *
 from xml_util import *

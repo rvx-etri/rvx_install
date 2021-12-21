@@ -83,7 +83,7 @@ class RemoteHandler:
       run_shell_cmd(local_cmd, local_dir, stderr=subprocess.STDOUT)
     else:
       remote_cmd = f'get {remote_file}'
-      script_file = Path('sftp_script.sh')
+      script_file = local_dir / 'sftp_script.sh'
       script_file.write_text(remote_cmd)
 
       sshpass_cmd = 'psftp -pw {0} -P {1} {2}@{3} -b'.format(self.passwd, self.ssh_port, self.username, self.ip_address)
@@ -103,7 +103,7 @@ class RemoteHandler:
       run_shell_cmd(local_cmd, local_dir, stderr=subprocess.STDOUT)
     else:
       remote_cmd = f'put {filename} {remote_file}'
-      script_file = Path('sftp_script.sh')
+      script_file = local_dir / 'sftp_script.sh'
       script_file.write_text(remote_cmd)
 
       sshpass_cmd = 'psftp -pw {0} -P {1} {2}@{3} -b'.format(self.passwd, self.ssh_port, self.username, self.ip_address)

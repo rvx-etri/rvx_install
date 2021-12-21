@@ -50,10 +50,11 @@ class RvxDevkit():
   def is_local(self): # my machine
     return (not self.config.is_server)
 
-  def __init__(self, config:RvxConfig, output_file:str, engine_log:RvxEngineLog):
+  def __init__(self, config:RvxConfig, output_file:str, engine_log:RvxEngineLog, called_by_gui:bool):
     self.config = config
     self.output_file = Path(output_file).resolve() if output_file else None
     self.engine_log = engine_log
+    self.called_by_gui = called_by_gui
     self.remote_handler = RemoteHandler(self.config)
     self.is_debug_mode = (self.config.home_path / 'debug').is_file()
     if self.is_local and self.is_debug_mode:
@@ -83,7 +84,7 @@ class RvxDevkit():
     dst_file = path / '.gitignore'
     copy_file(src_file, dst_file)
 
-  def handle_output(self, contents):
+  def handle_output(self, contents:str):
     if self.output_file:
       with open(self.output_file,'w') as f:
         f.write(contents)
@@ -181,7 +182,7 @@ class RvxDevkit():
 
   def studio_cmd(self):
     lib_jar_list = []
-    for lib_jar in self.config.gui_path.glob('*.jar'):
+    for lib_jar in self.config.gui_path.glob('./lib/*.jar'):
       lib_jar_list.append(str(lib_jar))
     lib_jar_arg = ':'.join(lib_jar_list)
     studio_binary = self.config.gui_path / 'rvx_studio.jar'

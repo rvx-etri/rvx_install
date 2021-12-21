@@ -27,10 +27,10 @@ def configure_template_text(contents:str, conv_info=None):
     config_line = ''
     conv_dict = {}
   elif type(conv_info)==dict:
-    config_line = ' '.join([f'{x}={y}' for x, y in conv_info.items()])
+    config_line = ' '.join([f'"{x}={y}"' for x, y in conv_info.items()])
     conv_dict = conv_info
   elif type(conv_info)==list or type(conv_info)==tuple:
-    config_line = ' '.join([f'{x}={y}' for x, y in conv_info])
+    config_line = ' '.join([f'"{x}={y}"' for x, y in conv_info])
     conv_dict = {}
     for before_word, after_word in conv_info:
       assert before_word
