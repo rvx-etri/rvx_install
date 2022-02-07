@@ -85,6 +85,7 @@ if __name__ == '__main__':
           print('Windows Binary: No Update')
         path_list = os.environ.get('Path').split(';')
         path_name = Path('${RVX_MINI_HOME}') / output_dir.name
+        correct_path = True
         if str(path_name) not in path_list:
           new_path_list = []
           for path in path_list:
@@ -95,7 +96,10 @@ if __name__ == '__main__':
           if len(path_in_single_line) < 1024:
             execute_shell_cmd(f'setx Path \"{path_in_single_line}\"')
           else:
-            print(f'[WARNING] Add {str(path_name)} into PATH variable manually')
+            correct_path = False
+            print(f'[WARNING] Add {str(path_name)} into Path variable manually')
+        if correct_path:
+          print(f'[INFO] Path variable is updated successfully')
 
     elif cmd=='ssh':
       if is_windows:
