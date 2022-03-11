@@ -84,7 +84,7 @@ if __name__ == '__main__':
         else:
           print('Windows Binary: No Update')
         path_list = os.environ.get('Path').split(';')
-        path_name = Path('${RVX_MINI_HOME}') / output_dir.name
+        path_name = Path('\"%\"RVX_MINI_HOME%') / output_dir.name
         correct_path = True
         if str(path_name) not in path_list:
           new_path_list = []
