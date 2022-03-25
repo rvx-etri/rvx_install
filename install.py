@@ -236,6 +236,17 @@ if __name__ == '__main__':
       execute_shell_cmd('tar --version', home_path)
       print('\n## java check ##')
       execute_shell_cmd('java -version', home_path)
+      if is_windows:
+        print('\n## sh check ##')
+        result = run_shell_cmd('where sh', asserts_when_error=False)
+        if result.returncode==0:
+          stdout = result.stdout.decode(encoding='cp949').replace('\r','')
+          print(stdout)
+          print('[CRITICAL WARNING]')
+          print('\"sh\" binary MUST NOT exist in Path')
+          print('Please update Path NOT to find \"sh\" binary')
+        else:
+          print('OKAY')
 
     else:
       assert 0
