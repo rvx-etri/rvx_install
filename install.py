@@ -83,7 +83,10 @@ if __name__ == '__main__':
           extract_file(tar_file)
         else:
           print('Windows Binary: No Update')
-        path_list = os.environ.get('Path').split(';')
+        path_value = os.environ.get('Path')
+        date = datetime.datetime.now().strftime('%Y-%m-%d-%H-%M-%S')
+        (home_path / f'Path-{date}.txt').write_text(path_value)
+        path_list = path_value.split(';')
         path_name = Path('\"%\"RVX_MINI_HOME%') / output_dir.name
         correct_path = True
         if str(path_name) not in path_list:
@@ -258,5 +261,3 @@ if __name__ == '__main__':
       devkit.engine_log.add_new_job(args.cmd, True, 'done')
     devkit.engine_log.export_file()
     devkit.check_log(True)
-
-
