@@ -21,3 +21,25 @@
 
 GIT_REMOTE_URL=git@bitbucket.org:kyuseung_han/rvx_install.git
 -include ${RVX_UTIL_HOME}/remove_git_history.mh
+
+env_check:
+ifndef RVX_ETRI_HOME
+	$(error source the source file in RVX_ETRI_HOME)
+endif
+
+update_common: env_check update_common_util update_devkit
+
+update_common_util:
+	cp ${RVX_UTIL_HOME}/config_file_manager.py ./
+	cp ${RVX_UTIL_HOME}/configure_template.py ./
+	cp ${RVX_UTIL_HOME}/generate_git_info.py ./
+	cp ${RVX_UTIL_HOME}/os_util.py ./
+	cp ${RVX_UTIL_HOME}/re_util.py ./
+	cp ${RVX_UTIL_HOME}/xml_util.py ./
+
+update_devkit:
+	cp ${RVX_DEVKIT_HOME}/env/engine/rvx_config.py ./
+	cp ${RVX_DEVKIT_HOME}/env/engine/rvx_devkit.py ./
+	cp ${RVX_DEVKIT_HOME}/env/engine/rvx_engine_log.py ./
+	cp ${RVX_DEVKIT_HOME}/env/engine/rvx_engine_util.py ./
+	

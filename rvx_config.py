@@ -204,13 +204,32 @@ class RvxConfig():
     if not path:
       path = self.hwlib_path / 'munoc'
     return path
+  
+  @property
+  def pact_path(self):
+    if self.is_client:
+      candidate_path = self.home_path / 'rvx_hwlib_special' / 'pact'
+      path = candidate_path if candidate_path.is_dir() else None
+    else:
+      path = get_path_from_os_env('PACT_HW_HOME')
+      if not path:
+        candidate_path = self.hwlib_path.parent / 'hwlib_special' / 'pact'
+        if candidate_path.is_dir():
+          path = candidate_path
+    return path
+
+  @property
+  def is_client(self):
+    return self.mini_install_path.is_file()
+
+  @property
+  def is_server(self):
+    return self.server_mode_path.is_file()
     
   def __init__(self, home_path:Path=None):
     self.home_path = home_path.resolve()
     assert ' ' not in str(self.home_path), 'space is NOT allowed in home path'
     assert self.home_path.is_dir(), home_path
-    self.is_client = self.mini_install_path.is_file()
-    self.is_server = self.server_mode_path.is_file()
     if self.is_client:
       self.devkit_path = None
     else:

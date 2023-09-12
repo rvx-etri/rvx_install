@@ -17,6 +17,7 @@
 ## ****************************************************************************
 
 import os
+import getpass
 
 from pathlib import Path
 
@@ -26,7 +27,7 @@ from rvx_config import *
 from rvx_engine_log import *
 
 import import_util
-from generate_git_version import *
+from generate_git_info import *
 
 class RvxDevkit():
   @staticmethod
@@ -79,7 +80,7 @@ class RvxDevkit():
     return self.config.utility_path / file_name
 
   def set_gitignore(self, type:str, path:Path):
-    src_file = self.get_env_path('git',f'gitignore.{type}')
+    src_file = self.get_env_path('git',f'gitignore.{type}.txt')
     assert src_file.is_file()
     dst_file = path / '.gitignore'
     copy_file(src_file, dst_file)
@@ -192,6 +193,10 @@ class RvxDevkit():
   def home_git_info(self):
     git_version = get_git_version(self.config.home_path)
     return git_version
+  
+  def home_git_name(self):
+    git_name = get_git_name(self.config.home_path)
+    return git_name
 
   def devkit_git_info(self):
     if self.is_client:
@@ -199,6 +204,13 @@ class RvxDevkit():
     else:
       git_version = get_git_version(self.config.devkit_path)
     return git_version
+
+  def username(self):
+    if self.is_client:
+      username = self.config.username
+    else:
+      username = getpass.getuser()
+    return username
 
   def spec_checker_cmd(self):
     checker_binary = self.get_env_path('spec_checker', 'rvx_spec_checker.jar')
