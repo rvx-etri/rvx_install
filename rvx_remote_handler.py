@@ -26,7 +26,7 @@ class RemoteHandler:
   
   @property
   def passwd(self):
-    return self.config.passwd
+    return self.config.passwd.replace('!','\!')
 
   @property
   def remote_home_directory(self):

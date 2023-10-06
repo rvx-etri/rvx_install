@@ -43,4 +43,5 @@ update_devkit:
 	cp ${RVX_DEVKIT_HOME}/env/engine/rvx_devkit.py ./
 	cp ${RVX_DEVKIT_HOME}/env/engine/rvx_engine_log.py ./
 	cp ${RVX_DEVKIT_HOME}/env/engine/rvx_engine_util.py ./
+	cp ${RVX_DEVKIT_HOME}/env/engine/rvx_remote_handler.py ./
 	
