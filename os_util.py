@@ -21,7 +21,6 @@ import os
 import sys
 import subprocess
 import shutil
-import distutils.dir_util
 import distro
 
 from urllib import request
@@ -160,8 +159,7 @@ def remove_directory(dir:Path):
 
 def copy_directory(src_dir:Path, dst_dir:Path):
   assert src_dir.is_dir()
-  distutils.dir_util.copy_tree(str(src_dir), str(dst_dir))
-  # shutil.copytree does not work when dst_dir exists
+  shutil.copytree(str(src_dir), str(dst_dir), dirs_exist_ok=True)
 
 def copy_file(src_file:Path, dst_file:Path):
   assert src_file.is_file(), src_file

@@ -36,6 +36,26 @@ def get_git_name(path:Path):
   git_name = re.findall(re_git_name,result, re.DOTALL)[0]
   return git_name
 
+def check_if_path_is_tracked_by_git(git_repo:Path, path:Path):
+  exist = False
+  git_repo_abs = git_repo.expanduser().resolve()
+  path_abs = path.expanduser().resolve()
+  if not git_repo_abs.is_dir():
+    pass
+  elif not (git_repo_abs / '.git').is_dir():
+    pass
+  elif not path_abs.exists():
+    pass
+  else:
+    try:
+      relative_path = path_abs.relative_to(git_repo_abs)
+      result = subprocess.run(f'git ls-files {relative_path}', cwd=git_repo_abs, shell=True, stdout=subprocess.PIPE).stdout.decode('utf-8', errors='ignore')
+      if result:
+        exist = True 
+    except:
+      pass
+  return exist
+
 if __name__ == "__main__":
   
   parser = argparse.ArgumentParser(description='Git Info Generation')
@@ -54,6 +74,11 @@ if __name__ == "__main__":
     info_text = sep.join([get_git_version(Path(x)) for x in args.path])
   elif args.cmd=='name':
     info_text = sep.join([get_git_name(Path(x)) for x in args.path])
+  elif args.cmd=='check':
+    assert len(args.path)==2, args.path
+    info_text = check_if_path_is_tracked(Path(args.path[0]), Path(args.path[1]))
+  else:
+    assert 0, args.cmd
 
   if args.output:
     output_file = Path(args.output)

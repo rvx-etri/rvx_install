@@ -36,6 +36,7 @@ update_common_util:
 	cp ${RVX_UTIL_HOME}/os_util.py ./
 	cp ${RVX_UTIL_HOME}/re_util.py ./
 	cp ${RVX_UTIL_HOME}/xml_util.py ./
+	cp ${RVX_UTIL_HOME}/misc_util.py ./
 
 update_devkit:
 	cp ${RVX_DEVKIT_HOME}/env/engine/rvx_config.py ./

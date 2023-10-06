@@ -5,10 +5,10 @@ from pathlib import Path
 import xml.etree.ElementTree as XmlTree
 from xml.dom import minidom
 from cryptography.fernet import Fernet
-from distutils.util import strtobool
 
 from os_util import *
 from xml_util import *
+from misc_util import *
 
 class KeyFileManager():
   def __init__(self, file_path:Path):
@@ -92,7 +92,7 @@ class ConfigFileManager():
           print('Not integer.')
           pass
       elif allowed_value_type_or_list=='bool':
-        answer = strtobool(answer)
+        answer = answer2bool(answer)
         break
       elif not allowed_value_list:
         break
