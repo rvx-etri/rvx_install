@@ -97,7 +97,7 @@ class RvxToolConfig(ConfigFileManager):
     # nullify if not exist
     exist = False
     binary_path = get_path_from_os_env('RVX_BINARY_HOME')
-    if binary_path.is_dir():
+    if binary_path:
       if (binary_path / 'source').is_file():
         exist = True
     if not exist:
