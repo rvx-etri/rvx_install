@@ -93,7 +93,7 @@ class RvxMiniHome():
     if sync_is_required:
       remove_directory(self.sync_path)
       self.devkit.get_remote_handler().extract_tar_file(remote_sync_filename, '.', self.home_path)
-      sync_file = self.sync_path / 'sync.py'
+      sync_file = self.sync_path / 'install_sync.py'
       assert sync_file.is_file(), sync_file
       execute_shell_cmd(f'{self.devkit.config.python3_cmd} {sync_file}', self.home_path)
       if (self.home_path/'env').is_dir():
@@ -111,19 +111,20 @@ class RvxMiniHome():
     self.sync()
 
   def clean(self):  
-    preserved = frozenset(('.git','.gitignore','.gitmodules','Makefile','README.md','source','rvx_each.mh','rvx_init.mh','rvx_config.mh', 'rvx_python_config.mh','debug',RvxMiniHome.read_only_tag, 'python3.bat'))
+    preserved_file_list = frozenset(('.git','.gitignore','.gitmodules','Makefile','README.md','source','rvx_each.mh','rvx_init.mh','rvx_config.mh', 'rvx_python_config.mh','debug',RvxMiniHome.read_only_tag, 'python3.bat'))
 
     remove_directory(self.home_path / 'sync')
     remove_directory(self.home_path / 'env')
     remove_directory(self.home_path / 'rvx_util')
     remove_directory(self.home_path / 'rvx_hwlib')
+    remove_directory(self.home_path / 'rvx_ssw')
     run_shell_cmd('git checkout --force ./rvx_hwlib', self.home_path, stderr=subprocess.DEVNULL, prints_when_error=False, asserts_when_error=False)
     remove_directory(self.home_path / 'rvx_install' / '__pycache__')
     remove_directory(self.devkit.config.local_setup_path)
 
     for element in self.home_path.glob('*'):
       if element.is_file():
-        if element.name not in preserved:
+        if element.name not in preserved_file_list:
           try:
             remove_file(element)
           except Exception as e:

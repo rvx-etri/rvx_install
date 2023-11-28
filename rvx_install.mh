@@ -39,4 +39,14 @@ gui:
 platform_gui:
 	@cd ./platform && make gui
 
-.PHONY: ${PYTHON_CMD_LIST}
+compiler:
+	#rm -rf ./rvx_binary
+	#git clone https://bitbucket.org/kyuseung_han/rvx_binary.git
+	#cd ./rvx_binary && make config
+	#cd ./rvx_binary && make compiler
+	#make config
+	#-rm ./.rvx_tool_config
+	#-rm ./sync
+	@echo "'make sync' again"
+
+.PHONY: ${PYTHON_CMD_LIST} compiler

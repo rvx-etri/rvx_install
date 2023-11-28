@@ -1,3 +1,10 @@
 #!/bin/bash
 
 export RVX_MINI_HOME="${RVX_MINI_HOME}"
+
+export RVX_SSW_HOME=${RVX_MINI_HOME}/rvx_ssw
+
+if [ -f ${RVX_MINI_HOME}/rvx_binary/source ]
+then
+source ${RVX_MINI_HOME}/rvx_binary/source
+fi

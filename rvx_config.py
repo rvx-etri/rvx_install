@@ -87,10 +87,21 @@ class RvxPathConfig(ConfigFileManager):
 class RvxToolConfig(ConfigFileManager):
   def __init__(self, file_path:Path):
     super().__init__('rvx_tool_config', file_path, None)
-    self.allowed_set = frozenset(('rtl_simulator','use_terminal_for_implementing_fpga','use_terminal_for_running_ocd','use_terminal_for_connecting_ocd','use_terminal_for_printf', 'smart_build'))
+    self.allowed_set = frozenset(('rtl_simulator','use_terminal_for_implementing_fpga','use_terminal_for_running_ocd','use_terminal_for_connecting_ocd','use_terminal_for_printf', 'build_smart','build_local'))
     if not self.check(self.allowed_set, exact=True):
       self.clear()
       assert self.check(self.allowed_set, exact=True)
+    self.update_build_local()
+
+  def update_build_local(self):
+    # nullify if not exist
+    exist = False
+    binary_path = get_path_from_os_env('RVX_BINARY_HOME')
+    if binary_path.is_dir():
+      if (binary_path / 'source').is_file():
+        exist = True
+    if not exist:
+      self.set_attr('build_local', False)
 
   def clear(self):
     super().clear()
@@ -103,7 +114,9 @@ class RvxToolConfig(ConfigFileManager):
     self.set_attr('use_terminal_for_running_ocd', True)
     self.set_attr('use_terminal_for_connecting_ocd', True)
     self.set_attr('use_terminal_for_printf', True)
-    self.set_attr('smart_build', True)
+    self.set_attr('build_smart', True)
+    self.set_attr('build_local', True)
+    self.update_build_local()
 
 class RvxSudoConfig(ConfigFileManager):
   def __init__(self, file_path:Path, key):
