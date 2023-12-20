@@ -108,9 +108,9 @@ if __name__ == '__main__':
       if is_windows:
         pass
       elif is_centos:
-        execute_shell_cmd(make_cmd_sudo('yum install sshpass', devkit.get_sudo_passwd()), home_path)
+        execute_shell_cmd(make_cmd_sudo('yum install -y sshpass', devkit.get_sudo_passwd()), home_path)
       elif is_ubuntu:
-        execute_shell_cmd(make_cmd_sudo('apt-get install sshpass', devkit.get_sudo_passwd()), home_path)
+        execute_shell_cmd(make_cmd_sudo('apt install -y sshpass', devkit.get_sudo_passwd()), home_path)
       else:
         assert 0
 
@@ -118,9 +118,9 @@ if __name__ == '__main__':
       if is_windows:
         pass
       elif is_centos:
-        execute_shell_cmd(make_cmd_sudo('yum install minicom', devkit.get_sudo_passwd()), home_path)
+        execute_shell_cmd(make_cmd_sudo('yum install -y minicom', devkit.get_sudo_passwd()), home_path)
       elif is_ubuntu:
-        execute_shell_cmd(make_cmd_sudo('apt-get install minicom', devkit.get_sudo_passwd()), home_path)
+        execute_shell_cmd(make_cmd_sudo('apt install -y minicom', devkit.get_sudo_passwd()), home_path)
       else:
         assert 0
 
