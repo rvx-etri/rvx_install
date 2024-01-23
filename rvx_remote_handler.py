@@ -63,7 +63,7 @@ class RemoteHandler:
     run_shell_cmd(local_cmd)
   
   def request_ssh(self, cmd:str, uses_stdout:bool=False):
-    remote_cmd = f'cd {self.remote_home_directory}; source source; {cmd}'
+    remote_cmd = f'cd {self.remote_home_directory}; source ./rvx_setup.sh; {cmd}'
     local_cmd = self.make_ssh_cmd(remote_cmd)
     result = run_shell_cmd(local_cmd, asserts_when_error=False)
     if uses_stdout:
@@ -118,7 +118,7 @@ class RemoteHandler:
 
   def is_file(self, filename:str):
     remote_file = self.remote_home_directory / filename
-    remote_cmd = f'cd {self.remote_home_directory}; source source; stat {remote_file}'
+    remote_cmd = f'cd {self.remote_home_directory}; source ./rvx_setup.sh; stat {remote_file}'
     local_cmd = self.make_ssh_cmd(remote_cmd)
     try:
       run_shell_cmd(local_cmd, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)

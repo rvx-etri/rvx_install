@@ -58,10 +58,13 @@ if __name__ == '__main__':
   assert args.input
   assert args.output
 
+  input_path = Path(args.input).absolute()
+  output_path = Path(args.output).absolute()
+
   conv_dict = {}
   if args.config:
     for config in args.config:
       before_word, after_word = config.split('=')
       assert before_word
       conv_dict[before_word] = after_word
-  configure_template_file(Path(args.input), Path(args.output), conv_dict)
+  configure_template_file(input_path, output_path, conv_dict)

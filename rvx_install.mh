@@ -47,7 +47,7 @@ compiler:
 	make config
 	-rm -rf ./.rvx_tool_config
 	-rm -rf ./sync
-	@echo "source ./source"
+	@echo "source ./rvx_setup.sh"
 	@echo "'make resync'"
 
 .PHONY: ${PYTHON_CMD_LIST} compiler

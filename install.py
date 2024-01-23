@@ -130,7 +130,7 @@ if __name__ == '__main__':
 
     elif cmd=='config':
       if is_linux:
-        configure_template_file(home_path / 'rvx_install' / 'rvx_mini.source', Path('.')/'source', (('RVX_MINI_HOME',str(home_path)),))
+        configure_template_file(home_path / 'rvx_install' / 'rvx_setup.sh.template', Path('.')/'rvx_setup.sh', (('RVX_MINI_HOME',str(home_path)),))
       else:
         execute_shell_cmd(f'setx RVX_MINI_HOME {home_path}')
       line_list = []

@@ -111,7 +111,7 @@ class RvxMiniHome():
     self.sync()
 
   def clean(self):  
-    preserved_file_list = frozenset(('.git','.gitignore','.gitmodules','Makefile','README.md','source','rvx_each.mh','rvx_init.mh','rvx_config.mh', 'rvx_python_config.mh','debug',RvxMiniHome.read_only_tag, 'python3.bat'))
+    preserved_file_list = frozenset(('.git','.gitignore','.gitmodules','Makefile','README.md','rvx_setup.sh','rvx_each.mh','rvx_init.mh','rvx_config.mh', 'rvx_python_config.mh','debug',RvxMiniHome.read_only_tag, 'python3.bat'))
 
     remove_directory(self.home_path / 'sync')
     remove_directory(self.home_path / 'env')

@@ -4,7 +4,7 @@ export RVX_MINI_HOME="${RVX_MINI_HOME}"
 
 export RVX_SSW_HOME=${RVX_MINI_HOME}/rvx_ssw
 
-if [ -f ${RVX_MINI_HOME}/rvx_binary/source ]
+if [ -f ${RVX_MINI_HOME}/rvx_binary/rvx_setup.sh ]
 then
-source ${RVX_MINI_HOME}/rvx_binary/source
+source ${RVX_MINI_HOME}/rvx_binary/rvx_setup.sh
 fi

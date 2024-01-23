@@ -98,7 +98,7 @@ class RvxToolConfig(ConfigFileManager):
     exist = False
     binary_path = get_path_from_os_env('RVX_BINARY_HOME')
     if binary_path:
-      if (binary_path / 'source').is_file():
+      if (binary_path / 'rvx_setup.sh').is_file():
         exist = True
     if not exist:
       self.set_attr('build_local', False)
