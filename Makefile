@@ -17,19 +17,21 @@
 # ****************************************************************************
 
 # DO NOT use this Makefile
-# make targets are available at the upper directory.
+# Use Makefile at the upper directory.
 
 GIT_REMOTE_URL=git@bitbucket.org:kyuseung_han/rvx_install.git
 -include ${RVX_UTIL_HOME}/remove_git_history.mh
 
-env_check:
+MINI_GIT=$(abspath ${CURDIR}/..)
+
+etri_env_check:
 ifndef RVX_ETRI_HOME
-	$(error source the source file in RVX_ETRI_HOME)
+	$(error source the rvs_setup script in RVX_ETRI_HOME)
 endif
 
-update_common: env_check update_common_util update_devkit
+update_common: update_common_util update_devkit
 
-update_common_util:
+update_common_util: etri_env_check
 	cp ${RVX_UTIL_HOME}/config_file_manager.py ./
 	cp ${RVX_UTIL_HOME}/configure_template.py ./
 	cp ${RVX_UTIL_HOME}/generate_git_info.py ./
@@ -38,10 +40,32 @@ update_common_util:
 	cp ${RVX_UTIL_HOME}/xml_util.py ./
 	cp ${RVX_UTIL_HOME}/misc_util.py ./
 
-update_devkit:
+update_devkit: etri_env_check
 	cp ${RVX_DEVKIT_HOME}/env/engine/rvx_config.py ./
 	cp ${RVX_DEVKIT_HOME}/env/engine/rvx_devkit.py ./
 	cp ${RVX_DEVKIT_HOME}/env/engine/rvx_engine_log.py ./
 	cp ${RVX_DEVKIT_HOME}/env/engine/rvx_engine_util.py ./
 	cp ${RVX_DEVKIT_HOME}/env/engine/rvx_remote_handler.py ./
-	
+
+mini_env_check:
+ifndef RVX_MINI_HOME
+	$(error source the rvs_setup script in RVX_MINI_HOME)
+endif
+
+MINI_GIT_FILE_LIST = Makefile .gitignore rvx_init.mh rvx_config.mh README.md
+
+update_mini_git: mini_env_check
+	cd ./mini_git && cp -f ${MINI_GIT_FILE_LIST} ${MINI_GIT}/
+	if [ -d ${MINI_GIT}/platform ] ;	then \
+		cp -f ./mini_git/platform/Makefile ${MINI_GIT}/platform/ ; \
+	else \
+		cp -r ./mini_git/platform/ ${MINI_GIT} ; \
+	fi
+	if [ -d ${MINI_GIT}/imp_class_info ] ;	then \
+		cp -f ./mini_git/imp_class_info/Makefile ${MINI_GIT}/imp_class_info/ ; \
+		cd ${MINI_GIT}/imp_class_info && make reimport ;\
+	else \
+		cp -r ./mini_git/imp_class_info/ ${MINI_GIT} ; \
+	fi
+
+init_mini_git: update_mini_git

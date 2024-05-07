@@ -1,0 +1,16 @@
+	,c0_sys_clk_p
+	,c0_sys_clk_n
+	,c0_ddr4_act_n
+	,c0_ddr4_adr
+	,c0_ddr4_ba
+	,c0_ddr4_bg
+	,c0_ddr4_cke
+	,c0_ddr4_odt
+	,c0_ddr4_cs_n
+	,c0_ddr4_ck_t
+	,c0_ddr4_ck_c
+	,c0_ddr4_reset_n
+	,c0_ddr4_dm_dbi_n
+	,c0_ddr4_dq
+	,c0_ddr4_dqs_c
+	,c0_ddr4_dqs_t

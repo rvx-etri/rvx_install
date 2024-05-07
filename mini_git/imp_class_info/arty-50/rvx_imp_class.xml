@@ -1,0 +1,25 @@
+<?xml version="1.0" ?>
+<rvx>
+  <imp_class_list>
+    <imp_class>
+      <name>arty-50</name>
+      <display_name>Arty-S7-50</display_name>
+      <type>fpga</type>
+      <fpga_info>
+        <part>xc7s50csga324-1</part>
+        <image_size>2192118</image_size>
+        <flash_interface_type>spix4</flash_interface_type>
+        <cfg_mem>mt25ql128-spi-x1_x2_x4</cfg_mem>
+        <dram>ddr3</dram>
+        <extenral_clk_mhz>100</extenral_clk_mhz>
+        <clk_dram_ref_mhz>200</clk_dram_ref_mhz>
+        <clk_dram_sys_mhz>100</clk_dram_sys_mhz>
+        <flash_sck_uses_startupe2/>
+        <exclude_port>LPSDR_DQ</exclude_port>
+        <exclude_port>sdram_cell_port</exclude_port>
+      </fpga_info>
+      <usb2jtag>15ba:002a</usb2jtag>
+      <usb2uart>0403:6010:01</usb2uart>
+    </imp_class>
+  </imp_class_list>
+</rvx>

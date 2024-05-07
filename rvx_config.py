@@ -227,8 +227,19 @@ class RvxConfig():
       path = get_path_from_os_env('PACT_HW_HOME')
       if not path:
         candidate_path = self.hwlib_path.parent / 'hwlib_special' / 'pact'
-        if candidate_path.is_dir():
-          path = candidate_path
+        path = candidate_path if candidate_path.is_dir() else None
+    return path
+
+  @property
+  def starc_path(self):
+    if self.is_client:
+      candidate_path = self.home_path / 'rvx_hwlib_special' / 'starc'
+      path = candidate_path if candidate_path.is_dir() else None
+    else:
+      path = get_path_from_os_env('STARC_HW_HOME')
+      if not path:
+        candidate_path = self.hwlib_path.parent / 'hwlib_special' / 'starc'
+        path = candidate_path if candidate_path.is_dir() else None
     return path
 
   @property

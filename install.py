@@ -144,7 +144,7 @@ if __name__ == '__main__':
       line_list.append('make reconfig_python')
       line_list.append('make config')
       if is_linux:
-        line_list.append('source ./source')
+        line_list.append('source ./rvx_setup.sh')
       line_list.append('make after_update')
       line_list.append('make check')
       line_list.append('make sync')

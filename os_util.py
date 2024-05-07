@@ -30,7 +30,7 @@ from pathlib import Path
 is_linux = (platform.system()=='Linux')
 is_windows = not is_linux
 is_centos = 'CentOS' in distro.name() or 'Red Hat' in distro.name()
-is_ubuntu = 'Ubuntu' in distro.name()
+is_ubuntu = 'Ubuntu' in distro.name() or 'Debian' in distro.name()
 is_other_os = (not is_windows) and (not is_centos) and (not is_ubuntu)
 prints_shell_cmd = False
 
@@ -202,6 +202,8 @@ def extract_file(target_file:Path):
     run_shell_cmd(f'tar -xzf ./{target_filename}', output_dir)
   elif target_filename.endswith('.tar') or target_filename.endswith('.xz'):
     run_shell_cmd(f'tar -xf ./{target_filename}', output_dir)
+  else:
+    assert 0, target_file
 
 def get_path_from_os_env(os_var_name:str, default_value=None, must:bool=False):
   x = os.environ.get(os_var_name)
