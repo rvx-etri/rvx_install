@@ -61,11 +61,13 @@ update_mini_git: mini_env_check
 	else \
 		cp -r ./mini_git/platform/ ${MINI_GIT} ; \
 	fi
-	if [ -d ${MINI_GIT}/imp_class_info ] ;	then \
-		cp -f ./mini_git/imp_class_info/Makefile ${MINI_GIT}/imp_class_info/ ; \
-		cd ${MINI_GIT}/imp_class_info && make reimport ;\
-	else \
-		cp -r ./mini_git/imp_class_info/ ${MINI_GIT} ; \
+	if ! [ -L ${MINI_GIT}/imp_class_info ] ;	then \
+		if [ -d ${MINI_GIT}/imp_class_info ] ;	then \
+			cp -f ./mini_git/imp_class_info/Makefile ${MINI_GIT}/imp_class_info/ ; \
+			cd ${MINI_GIT}/imp_class_info && make reimport ;\
+		else \
+			cp -r ./mini_git/imp_class_info/ ${MINI_GIT} ; \
+		fi ; \
 	fi
 
 init_mini_git: update_mini_git

@@ -1,0 +1,166 @@
+## ****************************************************************************
+## ****************************************************************************
+## Copyright SoC Design Research Group, All rights reserved.
+## Electronics and Telecommunications Research Institute (ETRI)
+##
+## THESE DOCUMENTS CONTAIN CONFIDENTIAL INFORMATION AND KNOWLEDGE
+## WHICH IS THE PROPERTY OF ETRI. NO PART OF THIS PUBLICATION IS
+## TO BE USED FOR ANY OTHER PURPOSE, AND THESE ARE NOT TO BE
+## REPRODUCED, COPIED, DISCLOSED, TRANSMITTED, STORED IN A RETRIEVAL
+## SYSTEM OR TRANSLATED INTO ANY OTHER HUMAN OR COMPUTER LANGUAGE,
+## IN ANY FORM, BY ANY MEANS, IN WHOLE OR IN PART, WITHOUT THE
+## COMPLETE PRIOR WRITTEN PERMISSION OF ETRI.
+## ****************************************************************************
+## 2019-07-19 : Sukho Lee (shlee99@etri.re.kr)
+## ****************************************************************************
+## LPSDRAM Pin Map, 1.8V VCCO (Bank 64, 67)
+## ****************************************************************************
+
+create_clock -period 20.0   [get_ports LPSDR_CLK_FB]
+#create_clock -period 6.0   [get_ports LPSDR_CLK_FB]
+#set_property CLOCK_DEDICATED_ROUTE FALSE [get_nets LPSDR_CLK_FB]
+
+
+set_property PACKAGE_PIN        AT33    [get_ports {    LPSDR_A[0]       }]
+set_property PACKAGE_PIN        AT35    [get_ports {    LPSDR_A[1]       }]
+set_property PACKAGE_PIN        BB28    [get_ports {    LPSDR_A[2]       }]
+set_property PACKAGE_PIN        AW32    [get_ports {    LPSDR_A[3]       }]
+set_property PACKAGE_PIN        AV30    [get_ports {    LPSDR_A[4]       }]
+set_property PACKAGE_PIN        AU33    [get_ports {    LPSDR_A[5]       }]
+set_property PACKAGE_PIN        AW29    [get_ports {    LPSDR_A[6]       }]
+set_property PACKAGE_PIN        AV29    [get_ports {    LPSDR_A[7]       }]
+set_property PACKAGE_PIN        AV31    [get_ports {    LPSDR_A[8]       }]
+set_property PACKAGE_PIN        BB29    [get_ports {    LPSDR_A[9]       }]
+
+set_property PACKAGE_PIN        AW31    [get_ports {    LPSDR_A[10]       }]
+set_property PACKAGE_PIN        AY31    [get_ports {    LPSDR_A[11]       }]
+set_property PACKAGE_PIN        AU34    [get_ports {    LPSDR_A[12]       }]
+
+set_property PACKAGE_PIN        BA30    [get_ports {    LPSDR_BA[0]       }]
+set_property PACKAGE_PIN        BB30    [get_ports {    LPSDR_BA[1]       }]
+
+set_property PACKAGE_PIN        AV34    [get_ports {    LPSDR_DQ[0]       }]
+set_property PACKAGE_PIN        AY33    [get_ports {    LPSDR_DQ[1]       }]
+set_property PACKAGE_PIN        AP33    [get_ports {    LPSDR_DQ[2]       }]
+set_property PACKAGE_PIN        AV32    [get_ports {    LPSDR_DQ[3]       }]
+set_property PACKAGE_PIN        AR34    [get_ports {    LPSDR_DQ[4]       }]
+set_property PACKAGE_PIN        BA33    [get_ports {    LPSDR_DQ[5]       }]
+set_property PACKAGE_PIN        AU32    [get_ports {    LPSDR_DQ[6]       }]
+set_property PACKAGE_PIN        BA32    [get_ports {    LPSDR_DQ[7]       }]
+set_property PACKAGE_PIN        BB33    [get_ports {    LPSDR_DQ[8]       }]
+set_property PACKAGE_PIN        AP32    [get_ports {    LPSDR_DQ[9]       }]
+set_property PACKAGE_PIN        BB34    [get_ports {    LPSDR_DQ[10]      }]
+set_property PACKAGE_PIN        AR33    [get_ports {    LPSDR_DQ[11]      }]
+set_property PACKAGE_PIN        BB32    [get_ports {    LPSDR_DQ[12]      }]
+set_property PACKAGE_PIN        AW33    [get_ports {    LPSDR_DQ[13]      }]
+set_property PACKAGE_PIN        AY34    [get_ports {    LPSDR_DQ[14]      }]
+set_property PACKAGE_PIN        AW34    [get_ports {    LPSDR_DQ[15]      }]
+set_property PACKAGE_PIN        BA28    [get_ports {    LPSDR_DQ[16]      }]
+set_property PACKAGE_PIN        AP34    [get_ports {    LPSDR_DQ[17]      }]
+set_property PACKAGE_PIN        AT27    [get_ports {    LPSDR_DQ[18]      }]
+set_property PACKAGE_PIN        AY28    [get_ports {    LPSDR_DQ[19]      }]
+set_property PACKAGE_PIN        AM23    [get_ports {    LPSDR_DQ[20]      }]
+set_property PACKAGE_PIN        AR25    [get_ports {    LPSDR_DQ[21]      }]
+set_property PACKAGE_PIN        AP24    [get_ports {    LPSDR_DQ[22]      }]
+set_property PACKAGE_PIN        AW28    [get_ports {    LPSDR_DQ[23]      }]
+set_property PACKAGE_PIN        AP23    [get_ports {    LPSDR_DQ[24]      }]
+set_property PACKAGE_PIN        AP27    [get_ports {    LPSDR_DQ[25]      }]
+set_property PACKAGE_PIN        AV27    [get_ports {    LPSDR_DQ[26]      }]
+set_property PACKAGE_PIN        AU28    [get_ports {    LPSDR_DQ[27]      }]
+set_property PACKAGE_PIN        AN26    [get_ports {    LPSDR_DQ[28]      }]
+set_property PACKAGE_PIN        AT28    [get_ports {    LPSDR_DQ[29]      }]
+set_property PACKAGE_PIN        AU27    [get_ports {    LPSDR_DQ[30]      }]
+set_property PACKAGE_PIN        AV26    [get_ports {    LPSDR_DQ[31]      }]
+
+set_property PACKAGE_PIN        AN34    [get_ports {    LPSDR_DQM[0]      }]
+set_property PACKAGE_PIN        AV35    [get_ports {    LPSDR_DQM[1]      }]
+set_property PACKAGE_PIN        AP26    [get_ports {    LPSDR_DQM[2]      }]
+set_property PACKAGE_PIN        AR26    [get_ports {    LPSDR_DQM[3]      }]
+
+set_property PACKAGE_PIN        BA31    [get_ports {    LPSDR_CKE0      }]
+set_property PACKAGE_PIN        AU35    [get_ports {    LPSDR_CLK       }]
+set_property PACKAGE_PIN        AT32    [get_ports {    LPSDR_CLK_FB    }]
+set_property PACKAGE_PIN        AR35    [get_ports {    LPSDR_CS0_N     }]
+set_property PACKAGE_PIN        AY29    [get_ports {    LPSDR_RAS_N     }]
+set_property PACKAGE_PIN        AY30    [get_ports {    LPSDR_CAS_N     }]
+set_property PACKAGE_PIN        AM24    [get_ports {    LPSDR_WE_N      }]
+
+set_property PACKAGE_PIN        BB24    [get_ports {    LPSDR_CKE1      }]
+set_property PACKAGE_PIN        BA27    [get_ports {    LPSDR_CS1_N     }]
+
+#######################
+set_property IOSTANDARD LVCMOS18        [get_ports {    LPSDR_A[0]        }]
+set_property IOSTANDARD LVCMOS18        [get_ports {    LPSDR_A[1]        }]
+set_property IOSTANDARD LVCMOS18        [get_ports {    LPSDR_A[2]        }]
+set_property IOSTANDARD LVCMOS18        [get_ports {    LPSDR_A[3]        }]
+set_property IOSTANDARD LVCMOS18        [get_ports {    LPSDR_A[4]        }]
+set_property IOSTANDARD LVCMOS18        [get_ports {    LPSDR_A[5]        }]
+set_property IOSTANDARD LVCMOS18        [get_ports {    LPSDR_A[6]        }]
+set_property IOSTANDARD LVCMOS18        [get_ports {    LPSDR_A[7]        }]
+set_property IOSTANDARD LVCMOS18        [get_ports {    LPSDR_A[8]        }]
+set_property IOSTANDARD LVCMOS18        [get_ports {    LPSDR_A[9]        }]
+set_property IOSTANDARD LVCMOS18        [get_ports {    LPSDR_A[10]       }]
+set_property IOSTANDARD LVCMOS18        [get_ports {    LPSDR_A[11]       }]
+set_property IOSTANDARD LVCMOS18        [get_ports {    LPSDR_A[12]       }]
+set_property IOSTANDARD LVCMOS18        [get_ports {    LPSDR_BA[0]       }]
+set_property IOSTANDARD LVCMOS18        [get_ports {    LPSDR_BA[1]       }]
+set_property IOSTANDARD LVCMOS18        [get_ports {    LPSDR_DQ[0]       }]
+set_property IOSTANDARD LVCMOS18        [get_ports {    LPSDR_DQ[1]       }]
+set_property IOSTANDARD LVCMOS18        [get_ports {    LPSDR_DQ[2]       }]
+set_property IOSTANDARD LVCMOS18        [get_ports {    LPSDR_DQ[3]       }]
+set_property IOSTANDARD LVCMOS18        [get_ports {    LPSDR_DQ[4]       }]
+set_property IOSTANDARD LVCMOS18        [get_ports {    LPSDR_DQ[5]       }]
+set_property IOSTANDARD LVCMOS18        [get_ports {    LPSDR_DQ[6]       }]
+set_property IOSTANDARD LVCMOS18        [get_ports {    LPSDR_DQ[7]       }]
+set_property IOSTANDARD LVCMOS18        [get_ports {    LPSDR_DQ[8]       }]
+set_property IOSTANDARD LVCMOS18        [get_ports {    LPSDR_DQ[9]       }]
+set_property IOSTANDARD LVCMOS18        [get_ports {    LPSDR_DQ[10]      }]
+set_property IOSTANDARD LVCMOS18        [get_ports {    LPSDR_DQ[11]      }]
+set_property IOSTANDARD LVCMOS18        [get_ports {    LPSDR_DQ[12]      }]
+set_property IOSTANDARD LVCMOS18        [get_ports {    LPSDR_DQ[13]      }]
+set_property IOSTANDARD LVCMOS18        [get_ports {    LPSDR_DQ[14]      }]
+set_property IOSTANDARD LVCMOS18        [get_ports {    LPSDR_DQ[15]      }]
+set_property IOSTANDARD LVCMOS18        [get_ports {    LPSDR_DQ[16]      }]
+set_property IOSTANDARD LVCMOS18        [get_ports {    LPSDR_DQ[17]      }]
+set_property IOSTANDARD LVCMOS18        [get_ports {    LPSDR_DQ[18]      }]
+set_property IOSTANDARD LVCMOS18        [get_ports {    LPSDR_DQ[19]      }]
+set_property IOSTANDARD LVCMOS18        [get_ports {    LPSDR_DQ[20]      }]
+set_property IOSTANDARD LVCMOS18        [get_ports {    LPSDR_DQ[21]      }]
+set_property IOSTANDARD LVCMOS18        [get_ports {    LPSDR_DQ[22]      }]
+set_property IOSTANDARD LVCMOS18        [get_ports {    LPSDR_DQ[23]      }]
+set_property IOSTANDARD LVCMOS18        [get_ports {    LPSDR_DQ[24]      }]
+set_property IOSTANDARD LVCMOS18        [get_ports {    LPSDR_DQ[25]      }]
+set_property IOSTANDARD LVCMOS18        [get_ports {    LPSDR_DQ[26]      }]
+set_property IOSTANDARD LVCMOS18        [get_ports {    LPSDR_DQ[27]      }]
+set_property IOSTANDARD LVCMOS18        [get_ports {    LPSDR_DQ[28]      }]
+set_property IOSTANDARD LVCMOS18        [get_ports {    LPSDR_DQ[29]      }]
+set_property IOSTANDARD LVCMOS18        [get_ports {    LPSDR_DQ[30]      }]
+set_property IOSTANDARD LVCMOS18        [get_ports {    LPSDR_DQ[31]      }]
+set_property IOSTANDARD LVCMOS18        [get_ports {    LPSDR_DQM[0]      }]
+set_property IOSTANDARD LVCMOS18        [get_ports {    LPSDR_DQM[1]      }]
+set_property IOSTANDARD LVCMOS18        [get_ports {    LPSDR_DQM[2]      }]
+set_property IOSTANDARD LVCMOS18        [get_ports {    LPSDR_DQM[3]      }]
+
+set_property IOSTANDARD LVCMOS18        [get_ports {    LPSDR_CAS_N     }]
+set_property IOSTANDARD LVCMOS18        [get_ports {    LPSDR_CKE0      }]
+set_property IOSTANDARD LVCMOS18        [get_ports {    LPSDR_CKE1      }]
+set_property IOSTANDARD LVCMOS18        [get_ports {    LPSDR_CLK       }]
+set_property IOSTANDARD LVCMOS18        [get_ports {    LPSDR_CLK_FB    }]
+set_property IOSTANDARD LVCMOS18        [get_ports {    LPSDR_CS0_N     }]
+set_property IOSTANDARD LVCMOS18        [get_ports {    LPSDR_CS1_N     }]
+set_property IOSTANDARD LVCMOS18        [get_ports {    LPSDR_RAS_N     }]
+set_property IOSTANDARD LVCMOS18        [get_ports {    LPSDR_WE_N      }]
+
+set_input_delay  -clock LPSDR_CLK_FB 4  [get_ports LPSDR_DQ[*]]
+set_output_delay -clock LPSDR_CLK_FB 4  [get_ports LPSDR_CKE*]
+set_output_delay -clock LPSDR_CLK_FB 4  [get_ports LPSDR_CS*_N]
+set_output_delay -clock LPSDR_CLK_FB 4  [get_ports LPSDR_RAS_N] 
+set_output_delay -clock LPSDR_CLK_FB 4  [get_ports LPSDR_CAS_N]
+set_output_delay -clock LPSDR_CLK_FB 4  [get_ports LPSDR_WE_N]
+set_output_delay -clock LPSDR_CLK_FB 4  [get_ports LPSDR_A[*]]
+set_output_delay -clock LPSDR_CLK_FB 4  [get_ports LPSDR_BA[*]]
+set_output_delay -clock LPSDR_CLK_FB 4  [get_ports LPSDR_DQM[*]]
+set_output_delay -clock LPSDR_CLK_FB 4  [get_ports LPSDR_DQ[*]]
+
+set_false_path -to [get_ports LPSDR_CLK]
+

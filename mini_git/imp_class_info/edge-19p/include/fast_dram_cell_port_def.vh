@@ -1,0 +1,16 @@
+input wire c0_sys_clk_p;
+input wire c0_sys_clk_n;
+output wire c0_ddr4_act_n;
+output wire [16:0] c0_ddr4_adr;
+output wire [1:0] c0_ddr4_ba;
+output wire [0:0] c0_ddr4_bg;
+output wire [0:0] c0_ddr4_cke;
+output wire [0:0] c0_ddr4_odt;
+output wire [0:0] c0_ddr4_cs_n;
+output wire [0:0] c0_ddr4_ck_t;
+output wire [0:0] c0_ddr4_ck_c;
+output wire c0_ddr4_reset_n;
+inout wire [3:0] c0_ddr4_dm_dbi_n;
+inout wire [31:0] c0_ddr4_dq;
+inout wire [3:0] c0_ddr4_dqs_c;
+inout wire [3:0] c0_ddr4_dqs_t;

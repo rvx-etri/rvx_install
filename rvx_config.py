@@ -22,7 +22,7 @@ from pathlib import Path
 from config_file_manager import *
 
 class RvxPathConfig(ConfigFileManager):
-  def __init__(self, file_path:Path, home_path:Path, devkit_path:Path, is_client:bool):
+  def __init__(self, file_path:Path, home_path:Path, devkit_path:Path, is_mini:bool):
     super().__init__('rvx_path_config', file_path, None)
     self.allowed_set = frozenset(('python3_cmd', 'home_path', 'devkit_path','utility_path','hwlib_path','local_setup_path', 'windows_binary_path', 'env_path', 'gui_path', 'synthesizer_path', 'ocd_path'))
     if self.check(self.allowed_set, exact=True):
@@ -46,7 +46,7 @@ class RvxPathConfig(ConfigFileManager):
       assert Path(python3_cmd).is_file(), python3_cmd
       self.set_attr('python3_cmd', python3_cmd)
 
-      if is_client:
+      if is_mini:
         self.set_attr('utility_path', home_path / 'rvx_util')
         self.set_attr('hwlib_path', home_path / 'rvx_hwlib')
         self.set_attr('env_path', home_path / 'env')
@@ -166,6 +166,14 @@ class RvxConfig():
     return self.home_path / 'rvx_install' / 'install.py'
   
   @property
+  def stand_alone_tag_path(self):
+    return self.home_path / 'this_git_is_stand_alone'
+  
+  @property
+  def is_stand_alone(self):
+    return self.stand_alone_tag_path.is_file()
+  
+  @property
   def server_mode_path(self):
     return self.home_path / '.rvx_server_mode'
 
@@ -220,7 +228,7 @@ class RvxConfig():
   
   @property
   def pact_path(self):
-    if self.is_client:
+    if self.is_mini:
       candidate_path = self.home_path / 'rvx_hwlib_special' / 'pact'
       path = candidate_path if candidate_path.is_dir() else None
     else:
@@ -232,7 +240,7 @@ class RvxConfig():
 
   @property
   def starc_path(self):
-    if self.is_client:
+    if self.is_mini:
       candidate_path = self.home_path / 'rvx_hwlib_special' / 'starc'
       path = candidate_path if candidate_path.is_dir() else None
     else:
@@ -243,8 +251,12 @@ class RvxConfig():
     return path
 
   @property
-  def is_client(self):
+  def is_mini(self):
     return self.mini_install_path.is_file()
+  
+  @property
+  def is_client(self):
+    return self.is_mini and (not self.is_stand_alone)
 
   @property
   def is_server(self):

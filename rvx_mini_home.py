@@ -36,7 +36,7 @@ remote_sync_filename = 'sync.tar.gz'
 sync_history_filename = 'synced.log'
 
 class RvxMiniHome():
-  read_only_tag = 'this_is_read_only_git'
+  read_only_tag = 'this_git_is_read_only'
 
   def __init__(self, devkit=None):
     assert devkit

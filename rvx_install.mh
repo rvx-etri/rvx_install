@@ -19,6 +19,7 @@
 ifdef RVX_MINI_HOME
 	include ./rvx_config.mh
 endif
+
 include ./rvx_init.mh
 -include ./rvx_each.mh
 -include ${RVX_ENV}/makefile/rvx_home.mh
