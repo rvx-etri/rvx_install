@@ -51,4 +51,11 @@ compiler:
 	@echo "source ./rvx_setup.sh"
 	@echo "'make resync'"
 
-.PHONY: ${PYTHON_CMD_LIST} compiler
+example:
+	@if [ -d ./rvx_platform_example ]; then \
+		cd ./rvx_platform_example && git pull origin master; \
+	else \
+		git clone https://bitbucket.org/kyuseung_han/rvx_platform_example.git; \
+	fi
+
+.PHONY: ${PYTHON_CMD_LIST} compiler example
