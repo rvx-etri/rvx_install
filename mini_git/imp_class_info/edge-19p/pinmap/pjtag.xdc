@@ -37,6 +37,11 @@ set_input_delay -clock pjtag_rclk 25.000 [get_ports pjtag_rtdi]
 set_input_delay -clock pjtag_rclk 25.000 [get_ports pjtag_rtms]
 set_output_delay -clock pjtag_rclk 25.000 [get_ports pjtag_rtdo]
 #
-#set_property CLOCK_DEDICATED_ROUTE FALSE [get_nets pjtag_rtck]
 
+#PMOD_4 (Olimex JTAG) for Test
+#set_property -dict { PACKAGE_PIN C21   IOSTANDARD LVCMOS33 } [get_ports { pjtag_rtdo }];
+#set_property -dict { PACKAGE_PIN D19   IOSTANDARD LVCMOS33 } [get_ports { pjtag_rtck }];
+#set_property -dict { PACKAGE_PIN B20   IOSTANDARD LVCMOS33 } [get_ports { pjtag_rtdi }];
+#set_property -dict { PACKAGE_PIN B19   IOSTANDARD LVCMOS33 } [get_ports { pjtag_rtms }];
+#set_property CLOCK_DEDICATED_ROUTE FALSE [get_nets pjtag_rtck]
 

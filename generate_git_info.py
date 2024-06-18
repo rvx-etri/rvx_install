@@ -32,7 +32,7 @@ def get_git_version(path:Path):
 def get_git_url(path:Path):
   assert path.is_dir(), path
   result = subprocess.run('git remote -v', cwd=path, shell=True, stdout=subprocess.PIPE).stdout.decode('utf-8', errors='ignore')
-  return result
+  return result[:-1]
 
 def get_git_name(path:Path):
   assert path.is_dir(), path
@@ -92,7 +92,7 @@ if __name__ == "__main__":
     output_file = Path(args.output)
     if args.append:
       assert(output_file.is_file())
-      contents = output_file.read_text()
+      contents = output_file.read_text()+'\n'
     else:
       contents = ''
     contents += info_text

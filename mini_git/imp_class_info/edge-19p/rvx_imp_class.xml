@@ -7,7 +7,7 @@
       <type>fpga</type>
       <fpga_info>
         <part>xcku19p-ffvj1760-3-e</part>
-        <image_size>36343233</image_size>
+        <image_size>65244908</image_size>
         <flash_interface_type>spix8</flash_interface_type>
         <cfg_mem>s25fl512s-spi-x1_x2_x4_x8</cfg_mem>
         <dram>ddr4</dram>
@@ -16,6 +16,8 @@
       <usb2jtag>0403:6011</usb2jtag>
       <usb2uart>0403:6011:01</usb2uart>
       <sdram>1:10:0x14:0x96:0x32f</sdram>
+      <user_ddr4>xilinx_ddr4_ctrl_axi128</user_ddr4>
+      <user_ddr3>xilinx_ddr3_ctrl_axi128</user_ddr3>
     </imp_class>
   </imp_class_list>
 </rvx>

@@ -226,29 +226,28 @@ class RvxConfig():
       path = self.hwlib_path / 'munoc'
     return path
   
-  @property
-  def pact_path(self):
+  def get_speical_git_path(self, name:str):
     if self.is_mini:
-      candidate_path = self.home_path / 'rvx_hwlib_special' / 'pact'
+      candidate_path = self.home_path / 'rvx_hwlib_special' / name
       path = candidate_path if candidate_path.is_dir() else None
     else:
-      path = get_path_from_os_env('PACT_HW_HOME')
+      path = get_path_from_os_env(f'{name.upper()}_HW_HOME')
       if not path:
-        candidate_path = self.hwlib_path.parent / 'hwlib_special' / 'pact'
+        candidate_path = self.hwlib_path.parent / 'hwlib_special' / name
         path = candidate_path if candidate_path.is_dir() else None
     return path
+  
+  @property
+  def pact_path(self):
+    return self.get_speical_git_path('pact')
 
   @property
   def starc_path(self):
-    if self.is_mini:
-      candidate_path = self.home_path / 'rvx_hwlib_special' / 'starc'
-      path = candidate_path if candidate_path.is_dir() else None
-    else:
-      path = get_path_from_os_env('STARC_HW_HOME')
-      if not path:
-        candidate_path = self.hwlib_path.parent / 'hwlib_special' / 'starc'
-        path = candidate_path if candidate_path.is_dir() else None
-    return path
+    return self.get_speical_git_path('starc')
+  
+  @property
+  def dca_path(self):
+    return self.get_speical_git_path('dca')
 
   @property
   def is_mini(self):
