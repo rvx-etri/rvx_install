@@ -16,5 +16,6 @@ rvx_util
 rvx_hwlib
 rvx_ssw
 rvx_binary*
+rvx_platform_example
 install_second
 manual

@@ -228,7 +228,7 @@ class RvxConfig():
   
   def get_speical_git_path(self, name:str):
     if self.is_mini:
-      candidate_path = self.home_path / 'rvx_hwlib_special' / name
+      candidate_path = self.home_path / 'hwlib_special' / name
       path = candidate_path if candidate_path.is_dir() else None
     else:
       path = get_path_from_os_env(f'{name.upper()}_HW_HOME')
