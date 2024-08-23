@@ -201,6 +201,10 @@ if __name__ == '__main__':
       mini_home.clean()      
       remove_directory(home_path/'platform')
       execute_shell_cmd('git checkout .', home_path)
+    
+    elif cmd=='example':
+      mini_home = RvxMiniHome(devkit)
+      mini_home.generate_example()
 
     elif cmd=='read_only':
       (home_path/RvxMiniHome.read_only_tag).touch()
@@ -264,7 +268,7 @@ if __name__ == '__main__':
   if args.cmd.endswith('clean'):
     engine_log.clean()
   else:
-    if not args.cmd.endswith('sync'):
+    if devkit.engine_log.current_job.name!=args.cmd:
       devkit.engine_log.add_new_job(args.cmd, True, 'done')
     devkit.engine_log.export_file()
     devkit.check_log(True)

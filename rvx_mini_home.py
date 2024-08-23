@@ -47,6 +47,10 @@ class RvxMiniHome():
     return self.devkit.config.home_path
 
   @property
+  def example_path(self):
+    return self.home_path / 'rvx_platform_example'
+
+  @property
   def sync_path(self):
     return self.home_path / 'sync'
 
@@ -72,6 +76,19 @@ class RvxMiniHome():
         key, value = info.split(':')
         info_dict[key] = value
     return info_dict
+  
+  def generate_example(self):
+    self.devkit.add_new_job('example', True)
+    local_info_dict = RvxMiniHome.generate_info_dict(self.devkit.get_sync_info_path)
+    git_version = local_info_dict.get('rvx_platform_example')
+    if git_version:
+      if not self.example_path.is_dir():
+        run_shell_cmd(f'git clone https://bitbucket.org/kyuseung_han/rvx_platform_example.git {self.example_path}', self.home_path, stderr=subprocess.STDOUT)
+      run_shell_cmd(f'git pull origin master', self.example_path)
+      run_shell_cmd(f'git checkout {git_version}', self.example_path)
+      self.devkit.add_log(f'Example Success', 'done')
+    else:
+      self.devkit.add_log(f'Example Fail: Sync Required', 'error')      
 
   def sync(self):
     is_install_complete = True
@@ -95,7 +112,7 @@ class RvxMiniHome():
     sync_is_required = True
     local_info_dict = RvxMiniHome.generate_info_dict(self.devkit.get_sync_info_path)
     if local_info_dict.get('rvx_server_manager')==remote_info_dict.get('rvx_server_manager'):
-      if remote_info_dict['synced']=='true':
+      if remote_info_dict.get('synced')=='true':
         sync_is_required = False
       
     self.devkit.add_new_job('sync', True)
@@ -112,8 +129,8 @@ class RvxMiniHome():
       else:
         self.devkit.add_log(f'Sync FAIL: please retry ({self.devkit.config.username}@{self.devkit.config.ip_address})', 'error')
     else:
+      remote_info_file.unlink()
       self.devkit.add_log(f'Sync Success: No Update ({self.devkit.config.username}@{self.devkit.config.ip_address})', 'done')
-    remote_info_file.unlink()
 
   def resync(self):
     remove_directory(self.sync_path)
@@ -121,7 +138,7 @@ class RvxMiniHome():
     self.sync()
 
   def clean(self):  
-    preserved_file_list = frozenset(('.git','.gitignore','.gitmodules','Makefile','README.md','rvx_setup.sh','rvx_each.mh','rvx_init.mh','rvx_config.mh', 'rvx_python_config.mh','debug',RvxMiniHome.read_only_tag, 'python3.bat'))
+    preserved_file_list = frozenset(('.git','.gitignore','.gitmodules','Makefile','README.md','rvx_setup.sh','rvx_each.mh','rvx_init.mh','rvx_config.mh', 'rvx_python_config.mh','debug',RvxMiniHome.read_only_tag, 'python3.bat','imp_class_info'))
 
     remove_directory(self.home_path / 'sync')
     remove_directory(self.home_path / 'env')

@@ -28,7 +28,8 @@ PYTHON_CMD_LIST = install windows_binary ssh misc config \
 									clean distclean \
 									sync sync_gui sync_ocd resync \
 									enable_debug disable_debug check_remote_log tool_config \
-									read_only after_update\
+									read_only after_update \
+                  example \
 									check
 
 ${PYTHON_CMD_LIST}:%:
@@ -51,11 +52,4 @@ compiler:
 	@echo "source ./rvx_setup.sh"
 	@echo "'make resync'"
 
-example:
-	@if [ -d ./rvx_platform_example ]; then \
-		cd ./rvx_platform_example && git pull origin master; \
-	else \
-		git clone https://bitbucket.org/kyuseung_han/rvx_platform_example.git; \
-	fi
-
-.PHONY: ${PYTHON_CMD_LIST} compiler example
+.PHONY: ${PYTHON_CMD_LIST} compiler
