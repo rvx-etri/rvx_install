@@ -229,6 +229,13 @@ if __name__ == '__main__':
           windows_binary_path = config.windows_binary_path / windows_binary
           if not windows_binary_path.is_file():
             assert 0, '\"make windows_binary\" and then \"make check\" again!'
+      
+      if is_linux:
+        print('\n## Linux locale check ##')
+        result = run_shell_cmd('locale', asserts_when_error=False)
+        stdout = result.stdout.decode(encoding='cp949').replace('\r','')
+        print(stdout)
+        
       print('\n## ssh check ##')
       if is_linux:
         execute_shell_cmd('sshpass -V', home_path)

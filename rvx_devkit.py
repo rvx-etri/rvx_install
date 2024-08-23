@@ -80,10 +80,18 @@ class RvxDevkit():
     return self.config.utility_path / file_name
 
   def set_gitignore(self, type:str, path:Path):
-    src_file = self.get_env_path('git',f'gitignore.{type}.txt')
-    assert src_file.is_file()
     dst_file = path / '.gitignore'
-    copy_file(src_file, dst_file)
+    if not dst_file.exists():
+      src_file = self.get_env_path('git',f'gitignore.{type}.txt')
+      assert src_file.is_file()
+      copy_file(src_file, dst_file)
+    
+  def geneate_rvx_each_template(self, type:str, path:Path):
+    dst_file = path / 'rvx_each.mh'
+    if not dst_file.exists():
+      src_file = self.get_env_path('rvx_each',f'gitignore.{type}.txt')
+      assert src_file.is_file()
+      copy_file(src_file, dst_file)
 
   def handle_output(self, contents:str):
     if self.output_file:

@@ -61,6 +61,17 @@ class RvxMiniHome():
   def _update_info(self, remote_info_file:Path):
     local_info_file = self.devkit.get_sync_info_path
     remote_info_file.replace(local_info_file)
+    
+  @staticmethod
+  def generate_info_dict(info_file:Path):
+    info_dict = {}
+    if info_file.is_file():
+      for info in info_file.read_text().split('\n'):
+        if ':' not in info:
+          pass
+        key, value = info.split(':')
+        info_dict[key] = value
+    return info_dict
 
   def sync(self):
     is_install_complete = True
@@ -79,14 +90,12 @@ class RvxMiniHome():
     self.devkit.get_remote_handler().request_ssh('make cloud.check > /dev/null 2>&1')
     self.devkit.get_remote_handler().request_sftp_get(remote_info_filename, '.', self.home_path)
     remote_info_file = self.home_path / remote_info_filename
-    remote_info = remote_info_file.read_text().split('\n')
-    #print(remote_info)
-
+    remote_info_dict = RvxMiniHome.generate_info_dict(remote_info_file)
+    
     sync_is_required = True
-
-    local_info = self.get_local_info()
-    if local_info[0]==remote_info[0]:
-      if len(remote_info)>2 and remote_info[-1]=='synced':
+    local_info_dict = RvxMiniHome.generate_info_dict(self.devkit.get_sync_info_path)
+    if local_info_dict.get('rvx_server_manager')==remote_info_dict.get('rvx_server_manager'):
+      if remote_info_dict['synced']=='true':
         sync_is_required = False
       
     self.devkit.add_new_job('sync', True)
@@ -104,6 +113,7 @@ class RvxMiniHome():
         self.devkit.add_log(f'Sync FAIL: please retry ({self.devkit.config.username}@{self.devkit.config.ip_address})', 'error')
     else:
       self.devkit.add_log(f'Sync Success: No Update ({self.devkit.config.username}@{self.devkit.config.ip_address})', 'done')
+    remote_info_file.unlink()
 
   def resync(self):
     remove_directory(self.sync_path)
@@ -126,6 +136,6 @@ class RvxMiniHome():
       if element.is_file():
         if element.name not in preserved_file_list:
           try:
-            remove_file(element)
+            element.unlink()
           except Exception as e:
             print(element.name, e)
