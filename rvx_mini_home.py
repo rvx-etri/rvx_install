@@ -82,18 +82,26 @@ class RvxMiniHome():
         info_dict[key] = value
     return info_dict
   
+  def update_example(self):
+    success = False
+    if self.example_path.is_dir():
+      local_info_dict = RvxMiniHome.generate_info_dict(self.devkit.get_sync_info_path)
+      git_version = local_info_dict.get('rvx_platform_example')
+      if git_version:
+        run_shell_cmd(f'git pull origin master', self.example_path)
+        run_shell_cmd(f'git checkout {git_version}', self.example_path)
+        success = True
+    return success
+  
   def generate_example(self):
     self.devkit.add_new_job('example', True)
-    local_info_dict = RvxMiniHome.generate_info_dict(self.devkit.get_sync_info_path)
-    git_version = local_info_dict.get('rvx_platform_example')
-    if git_version:
-      if not self.example_path.is_dir():
-        run_shell_cmd(f'git clone https://bitbucket.org/kyuseung_han/rvx_platform_example.git {self.example_path}', self.home_path, stderr=subprocess.STDOUT)
-      run_shell_cmd(f'git pull origin master', self.example_path)
-      run_shell_cmd(f'git checkout {git_version}', self.example_path)
+    if not self.example_path.is_dir():
+      run_shell_cmd(f'git clone https://bitbucket.org/kyuseung_han/rvx_platform_example.git {self.example_path}', self.home_path, stderr=subprocess.STDOUT)
+    success = self.update_example()
+    if success:
       self.devkit.add_log(f'Example Success', 'done')
     else:
-      self.devkit.add_log(f'Example Fail: Sync Required', 'error')      
+      self.devkit.add_log(f'Example Fail: Sync Required', 'error')
 
   def sync(self):
     is_install_complete = True
@@ -140,6 +148,7 @@ class RvxMiniHome():
         self.devkit.add_log(f'Sync Success: New update ({self.devkit.config.username}@{self.devkit.config.ip_address})', 'done')
       else:
         self.devkit.add_log(f'Sync FAIL: please retry ({self.devkit.config.username}@{self.devkit.config.ip_address})', 'error')
+      self.update_example()
     else:
       remote_info_file.unlink()
       self.devkit.add_log(f'Sync Success: No update ({self.devkit.config.username}@{self.devkit.config.ip_address})', 'done')

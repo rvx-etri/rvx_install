@@ -268,7 +268,7 @@ if __name__ == '__main__':
   if args.cmd.endswith('clean'):
     engine_log.clean()
   else:
-    if devkit.engine_log.current_job.name!=args.cmd:
+    if not args.cmd.endswith(devkit.engine_log.current_job.name):
       devkit.engine_log.add_new_job(args.cmd, True, 'done')
     devkit.engine_log.export_file()
     devkit.check_log(True)
