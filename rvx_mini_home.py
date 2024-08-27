@@ -134,9 +134,7 @@ class RvxMiniHome():
           sync_is_required = False
       
     self.devkit.add_new_job('sync', True)
-    if git_update_is_required:
-      self.devkit.add_log(f'Sync FAIL: please update ./rvx_install (checkout: {required_rvx_install_version})', 'error')
-    elif sync_is_required:
+    if sync_is_required:
       remove_directory(self.sync_path)
       self.devkit.get_remote_handler().extract_tar_file(remote_sync_filename, '.', self.home_path)
       sync_file = self.sync_path / 'install_sync.py'
@@ -145,7 +143,10 @@ class RvxMiniHome():
       if (self.home_path/'env').is_dir():
         self.devkit.get_remote_handler().request_ssh(f'touch ./{sync_history_filename}')
         self._update_info(remote_info_file)
-        self.devkit.add_log(f'Sync Success: New update ({self.devkit.config.username}@{self.devkit.config.ip_address})', 'done')
+        if git_update_is_required:
+          self.devkit.add_log(f'Sync WARNING: please update ./rvx_install (checkout: {required_rvx_install_version})', 'done')
+        else:
+          self.devkit.add_log(f'Sync Success: New update ({self.devkit.config.username}@{self.devkit.config.ip_address})', 'done')
       else:
         self.devkit.add_log(f'Sync FAIL: please retry ({self.devkit.config.username}@{self.devkit.config.ip_address})', 'error')
       self.update_example()
