@@ -16,6 +16,7 @@
 ## ****************************************************************************
 ## ****************************************************************************
 
+import platform
 import os
 import subprocess
 import argparse
@@ -23,15 +24,18 @@ import re
 from re_util import *
 from pathlib import *
 
+is_linux = (platform.system()=='Linux')
+encoding = 'utf8' if is_linux else 'cp949'
+
 def get_git_version(path:Path):
   assert path.is_dir(), path
-  result = subprocess.run('git show', cwd=path, shell=True, stdout=subprocess.PIPE)
-  git_version = result.stdout.decode('utf-8', errors='ignore').split('\n')[0].split(' ')[1]
+  result = subprocess.run('git show', cwd=path, shell=True, stdout=subprocess.PIPE).stdout.decode(encoding, errors='ignore')
+  git_version = result.split('\n')[0].split(' ')[1]
   return git_version[0:7]
 
 def get_git_url(path:Path):
   assert path.is_dir(), path
-  result = subprocess.run('git remote -v', cwd=path, shell=True, stdout=subprocess.PIPE).stdout.decode('utf-8', errors='ignore')
+  result = subprocess.run('git remote -v', cwd=path, shell=True, stdout=subprocess.PIPE, encoding=encoding).stdout
   return result[:-1]
 
 def get_git_name(path:Path):
@@ -54,7 +58,7 @@ def check_if_path_is_tracked_by_git(git_repo:Path, path:Path):
   else:
     try:
       relative_path = path_abs.relative_to(git_repo_abs)
-      result = subprocess.run(f'git ls-files {relative_path}', cwd=git_repo_abs, shell=True, stdout=subprocess.PIPE).stdout.decode('utf-8', errors='ignore')
+      result = subprocess.run(f'git ls-files {relative_path}', cwd=git_repo_abs, shell=True, stdout=subprocess.PIPE, encoding=encoding).stdout
       if result:
         exist = True 
     except:

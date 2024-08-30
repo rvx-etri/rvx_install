@@ -128,14 +128,14 @@ class RvxDevkit():
     if log.stderr:
       contents = ''
       if log.stdout:
-        contents += log.stdout.decode()
+        contents += log.stdout
         contents += '\n'
-      contents += log.stderr.decode()
+      contents += log.stderr
       self.engine_log.add_log(contents, is_file=True, is_user=True)
       self.engine_log.set_status('fail')
     else:
       if log.stdout:
-        self.engine_log.add_log(log.stdout.decode(), is_file=True, is_user=True)
+        self.engine_log.add_log(log.stdout, is_file=True, is_user=True)
       self.engine_log.set_status('done')
 
   def check_log(self, print_if_local:bool=False):

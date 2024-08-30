@@ -221,7 +221,7 @@ if __name__ == '__main__':
       for package in package_list:
         result = run_shell_cmd(f'{config.python3_cmd} -m pip show {package}', asserts_when_error=False)
         if result.returncode==0:
-          stdout = result.stdout.decode(encoding='cp949').replace('\r','')
+          stdout = result.stdout.replace('\r','')
           print(stdout.split('\n')[0:2])
         else:
           assert 0, '\"make pip3\" and then \"make check\" again!'
@@ -237,7 +237,7 @@ if __name__ == '__main__':
       if is_linux:
         print('\n## Linux locale check ##')
         result = run_shell_cmd('locale', asserts_when_error=False)
-        stdout = result.stdout.decode(encoding='cp949').replace('\r','')
+        stdout = result.stdout.replace('\r','')
         print(stdout)
         
       print('\n## ssh check ##')
@@ -254,7 +254,7 @@ if __name__ == '__main__':
         print('\n## sh check ##')
         result = run_shell_cmd('where sh', asserts_when_error=False)
         if result.returncode==0:
-          stdout = result.stdout.decode(encoding='cp949').replace('\r','')
+          stdout = result.stdout.replace('\r','')
           print(stdout)
           print('[CRITICAL WARNING]')
           print('\"sh\" binary MUST NOT exist in Path')

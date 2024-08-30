@@ -33,29 +33,30 @@ is_centos = 'CentOS' in distro.name() or 'Red Hat' in distro.name()
 is_ubuntu = 'Ubuntu' in distro.name() or 'Debian' in distro.name()
 is_other_os = (not is_windows) and (not is_centos) and (not is_ubuntu)
 prints_shell_cmd = False
+encoding = 'utf8' if is_linux else 'cp949'
 
+# depredicated soon
 def log_shell_cmd(cmd:str, cwd:Path=None, stderr_as_stdout:bool=False):
   stdout = subprocess.PIPE
   if stderr_as_stdout:
     stderr = subprocess.STDOUT
   else:
     stderr = subprocess.PIPE
-  result = subprocess.run(cmd, cwd=cwd, shell=True, stdout=stdout, stderr=stderr)
+  result = subprocess.run(cmd, cwd=cwd, shell=True, stdout=stdout, stderr=stderr, encoding=encoding)
   return result
 
+# depredicated soon
 def get_shell_stdout(cmd:str, cwd=None):
   result = log_shell_cmd(cmd,cwd)
   assert not result.stderr, result.stderr
-  return result.stdout.decode()
+  return result.stdout
 
+# depredicated soon
 def get_shell_stderr(cmd:str, cwd=None):
-  return log_shell_cmd(cmd,cwd).stderr.decode()
-
-def get_shell_output(cmd:str):
-  return get_shell_stdout(cmd)
+  return log_shell_cmd(cmd,cwd).stderr
 
 def run_shell_cmd(cmd:str, cwd:Path=None, stdout=subprocess.PIPE, stderr=subprocess.PIPE, prints_when_error=True, asserts_when_error=True):
-  result = subprocess.run(cmd, cwd=cwd, shell=True, stdout=stdout, stderr=stderr)
+  result = subprocess.run(cmd, cwd=cwd, shell=True, stdout=stdout, stderr=stderr, encoding=encoding)
   if result.returncode!=0:
     if asserts_when_error:
       assert 0, result
@@ -91,7 +92,7 @@ def get_os_version(os_name:str):
   return get_version(platform.platform(), '-', os_name, 1)
 
 def get_gnome_version():
-  return get_version(get_shell_output('gnome-terminal --version'), ' ', 'Terminal', 1) if is_linux else None
+  return get_version(get_shell_stdout('gnome-terminal --version'), ' ', 'Terminal', 1) if is_linux else None
 
 #os_version = get_os_version('centos' if is_centos else ) if is_linux else None
 gnome_terminal_version = get_gnome_version()
@@ -143,8 +144,7 @@ def remove(element:Path):
     assert 0
 
 def remove_file(file:Path):
-  if file.is_file():
-    os.remove(file)
+  file.unlink(missing_ok=True)
 
 def remove_files(dir:Path, pattern:str):
   if pattern:

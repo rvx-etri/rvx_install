@@ -56,6 +56,9 @@ MINI_GIT_FILE_LIST = Makefile .gitignore rvx_init.mh rvx_config.mh README.md
 
 update_mini_git: mini_env_check
 	cd ./mini_git && cp -f ${MINI_GIT_FILE_LIST} ${MINI_GIT}/
+	if ! [ -f ${MINI_GIT}/README.md ] ;	then \
+		cp -f ./mini_git/README.md ${MINI_GIT}/ ; \
+	fi
 	if [ -d ${MINI_GIT}/platform ] ;	then \
 		cp -f ./mini_git/platform/Makefile ${MINI_GIT}/platform/ ; \
 	else \

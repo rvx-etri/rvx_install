@@ -128,12 +128,14 @@ class RvxMiniHome():
     required_rvx_install_version = remote_info_dict.get('rvx_install')
     if get_git_version(self.install_path)==required_rvx_install_version:
       git_update_is_required = False
-      local_info_dict = RvxMiniHome.generate_info_dict(self.devkit.get_sync_info_path)
-      if local_info_dict.get('rvx_server_manager')==remote_info_dict.get('rvx_server_manager'):
-        if remote_info_dict.get('synced')=='true':
-          sync_is_required = False
+    local_info_dict = RvxMiniHome.generate_info_dict(self.devkit.get_sync_info_path)
+    if local_info_dict.get('rvx_server_manager')==remote_info_dict.get('rvx_server_manager'):
+      if remote_info_dict.get('synced')=='true':
+        sync_is_required = False
       
     self.devkit.add_new_job('sync', True)
+    if git_update_is_required:
+      self.devkit.add_log(f'Sync WARNING: please update ./rvx_install (checkout: {required_rvx_install_version})', 'done')
     if sync_is_required:
       remove_directory(self.sync_path)
       self.devkit.get_remote_handler().extract_tar_file(remote_sync_filename, '.', self.home_path)
@@ -143,16 +145,15 @@ class RvxMiniHome():
       if (self.home_path/'env').is_dir():
         self.devkit.get_remote_handler().request_ssh(f'touch ./{sync_history_filename}')
         self._update_info(remote_info_file)
-        if git_update_is_required:
-          self.devkit.add_log(f'Sync WARNING: please update ./rvx_install (checkout: {required_rvx_install_version})', 'done')
-        else:
+        if not git_update_is_required:
           self.devkit.add_log(f'Sync Success: New update ({self.devkit.config.username}@{self.devkit.config.ip_address})', 'done')
       else:
         self.devkit.add_log(f'Sync FAIL: please retry ({self.devkit.config.username}@{self.devkit.config.ip_address})', 'error')
       self.update_example()
     else:
       remote_info_file.unlink()
-      self.devkit.add_log(f'Sync Success: No update ({self.devkit.config.username}@{self.devkit.config.ip_address})', 'done')
+      if not git_update_is_required:
+        self.devkit.add_log(f'Sync Success: No update ({self.devkit.config.username}@{self.devkit.config.ip_address})', 'done')
 
   def resync(self):
     remove_directory(self.sync_path)
