@@ -24,7 +24,7 @@ from config_file_manager import *
 class RvxPathConfig(ConfigFileManager):
   def __init__(self, file_path:Path, home_path:Path, devkit_path:Path, is_mini:bool):
     super().__init__('rvx_path_config', file_path, None)
-    self.allowed_set = frozenset(('python3_cmd', 'home_path', 'devkit_path','utility_path','hwlib_path','local_setup_path', 'windows_binary_path', 'env_path', 'gui_path', 'synthesizer_path', 'ocd_path'))
+    self.allowed_set = frozenset(('python3_cmd', 'home_path', 'devkit_path','utility_path','local_setup_path', 'windows_binary_path', 'env_path', 'gui_path', 'synthesizer_path', 'ocd_path'))
     if self.check(self.allowed_set, exact=True):
       assert self.get_attr('home_path')==home_path, (self.get_attr('home_path'),home_path)
       assert self.get_attr('devkit_path')==devkit_path, (self.get_attr('devkit_path'),devkit_path)
@@ -48,13 +48,11 @@ class RvxPathConfig(ConfigFileManager):
 
       if is_mini:
         self.set_attr('utility_path', home_path / 'rvx_util')
-        self.set_attr('hwlib_path', home_path / 'rvx_hwlib')
         self.set_attr('env_path', home_path / 'env')
         self.set_attr('synthesizer_path', None)
       else:
         self.set_attr('utility_path', get_path_from_os_env('RVX_UTIL_HOME', must=True))
         self.set_attr('env_path', get_path_from_os_env('RVX_ENV', must=True))
-        self.set_attr('hwlib_path', get_path_from_os_env('RVX_HWLIB_HOME'))
         self.set_attr('synthesizer_path', get_path_from_os_env('RVX_SYNTHESIZER_HOME'))
 
       if is_windows:
@@ -87,7 +85,7 @@ class RvxPathConfig(ConfigFileManager):
 class RvxToolConfig(ConfigFileManager):
   def __init__(self, file_path:Path):
     super().__init__('rvx_tool_config', file_path, None)
-    self.allowed_set = frozenset(('rtl_simulator','use_terminal_for_implementing_fpga','use_terminal_for_running_ocd','use_terminal_for_connecting_ocd','use_terminal_for_printf', 'build_smart','build_local'))
+    self.allowed_set = frozenset(('rtl_simulator','use_terminal_for_implementing_fpga','use_terminal_for_running_ocd','use_terminal_for_connecting_ocd','use_terminal_for_printf', 'build_smart','build_local','minicom_as_file'))
     if not self.check(self.allowed_set, exact=True):
       self.clear()
       assert self.check(self.allowed_set, exact=True)
@@ -116,6 +114,7 @@ class RvxToolConfig(ConfigFileManager):
     self.set_attr('use_terminal_for_printf', True)
     self.set_attr('build_smart', True)
     self.set_attr('build_local', True)
+    self.set_attr('minicom_as_file', False)
     self.update_build_local()
 
 class RvxSudoConfig(ConfigFileManager):
@@ -218,24 +217,43 @@ class RvxConfig():
   @property
   def eclipse_project_template_path(self):
     return self.env_path / 'eclipse_template' / 'project'
+  
+  @staticmethod
+  def select_path(candidate_list:list, must:bool):
+    path = None
+    for candidate in candidate_list:
+      if candidate==None:
+        continue
+      if not candidate.is_dir():
+        continue
+      path = candidate
+      break
+    assert (not must) or (path!=None), candidate_list
+    return path
 
   @property
+  def hwlib_path(self):
+    candidate_list = (self.home_path / 'rvx_hwlib',
+                      get_path_from_os_env('RVX_HWLIB_HOME'))
+    return self.select_path(candidate_list, True)
+  
+  @property
+  def special_ip_path(self):
+    candidate_list = (self.home_path / 'rvx_special_ip',
+                      self.home_path / 'hwlib_special')
+    return self.select_path(candidate_list, False)
+    
+  @property
   def munoc_path(self):
-    path = get_path_from_os_env('MUNOC_HW_HOME')
-    if not path:
-      path = self.hwlib_path / 'munoc'
-    return path
+    candidate_list = (get_path_from_os_env('MUNOC_HW_HOME'),
+                      self.hwlib_path / 'munoc')
+    return self.select_path(candidate_list, True)
   
   def get_speical_git_path(self, name:str):
-    if self.is_mini:
-      candidate_path = self.home_path / 'hwlib_special' / name
-      path = candidate_path if candidate_path.is_dir() else None
-    else:
-      path = get_path_from_os_env(f'{name.upper()}_HW_HOME')
-      if not path:
-        candidate_path = self.hwlib_path.parent / 'hwlib_special' / name
-        path = candidate_path if candidate_path.is_dir() else None
-    return path
+    candidate_list = [get_path_from_os_env(f'{name.upper()}_HW_HOME')]
+    if self.special_ip_path:
+      candidate_list.append(self.special_ip_path / name)
+    return self.select_path(candidate_list, False)
   
   @property
   def pact_path(self):
