@@ -240,7 +240,8 @@ class RvxConfig():
   @property
   def special_ip_path(self):
     candidate_list = (self.home_path / 'rvx_special_ip',
-                      self.home_path / 'hwlib_special')
+                      self.home_path / 'hwlib_special',
+                      get_path_from_os_env('RVX_SPECIAL_IP_HOME'))
     return self.select_path(candidate_list, False)
     
   @property
