@@ -3,7 +3,8 @@
 ## Overview ##
 
 * RISC-V eXpress (RVX) is the HW/SW development kit for designing MCU-level low power SoCs.
-* Kyuseung Han (han@etri.re.kr), ETRI, Republic of Korea.
+* AI RISC-V eXpress (ARX) is an extension of RVX that incorporates AI functionality.
+* Kyuseung Han (han@etri.re.kr), Sukho Lee (shlee99@etri.re.kr), and Jae-Jin Lee (ceicarus@etri.re.kr), ETRI, Republic of Korea.
 * https://ieeexplore.ieee.org/document/9208740
 
 ## RVX Mini Install ##

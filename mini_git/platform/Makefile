@@ -25,12 +25,19 @@ endif
 TEMPLATE_FILE = ${RVX_ENV}/makefile/Makefile.platform_base.template
 include ${RVX_UTIL_HOME}/template_makefile.mh
 
+-include ./each_platform_base.mh
+
 PLATFORM_NAME=Base
 
 ENGINE_WS=${CURDIR}
 ENGINE_TARGET=platform
-ENGINE_CMD_LIST=new delete gui clean import
+ENGINE_USER_CMD_LIST=new delete clean
+ENGINE_USER_CMD_ADV_LIST=
+ENGINE_SYSTEM_CMD_LIST=gui import
 ENGINE_PARA= -p ${PLATFORM_NAME}
+MAKEFILE_USER_CMD_LIST=
+MAKEFILE_USER_CMD_ADV_LIST=copy_platform
+GUI_CMD_PARA_LIST=new:PLATFORM_NAME delete:PLATFORM_NAME copy_platform:BEFORE copy_platform:AFTER
 include ${RVX_ENV}/engine/rvx_make2engine.mh
 
 PLATFORM_BASE_DIR=${CURDIR}

@@ -29,9 +29,9 @@ ifndef RVX_ETRI_HOME
 	$(error source the rvs_setup script in RVX_ETRI_HOME)
 endif
 
-update_common: update_common_util update_devkit
+update_from_original: update_from_original_util update_from_original_devkit update_from_original_etc
 
-update_common_util: etri_env_check
+update_from_original_util: etri_env_check
 	cp ${RVX_UTIL_HOME}/config_file_manager.py ./
 	cp ${RVX_UTIL_HOME}/configure_template.py ./
 	cp ${RVX_UTIL_HOME}/generate_git_info.py ./
@@ -40,12 +40,17 @@ update_common_util: etri_env_check
 	cp ${RVX_UTIL_HOME}/xml_util.py ./
 	cp ${RVX_UTIL_HOME}/misc_util.py ./
 
-update_devkit: etri_env_check
+update_from_original_devkit: etri_env_check
 	cp ${RVX_DEVKIT_HOME}/env/engine/rvx_config.py ./
 	cp ${RVX_DEVKIT_HOME}/env/engine/rvx_devkit.py ./
 	cp ${RVX_DEVKIT_HOME}/env/engine/rvx_engine_log.py ./
 	cp ${RVX_DEVKIT_HOME}/env/engine/rvx_engine_util.py ./
 	cp ${RVX_DEVKIT_HOME}/env/engine/rvx_remote_handler.py ./
+
+update_from_original_etc: etri_env_check
+	cd ./mini_git/platform && make update_makefile
+	cd ./mini_git/imp_class_info && make update_makefile
+	cd ./mini_git/imp_class_info && make reimport
 
 mini_env_check:
 ifndef RVX_MINI_HOME
