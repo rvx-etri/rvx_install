@@ -4,7 +4,8 @@
 		<imp_class>
 			<name>genesys2</name>
 			<display_name>Genesys2</display_name>
-			<type>fpga</type>
+      <type>fpga</type>
+      <jtag_khz>10000</jtag_khz>
 			<fpga_info>
 				<part>xc7k325tffg900-2</part>
 				<image_size>11443722</image_size>

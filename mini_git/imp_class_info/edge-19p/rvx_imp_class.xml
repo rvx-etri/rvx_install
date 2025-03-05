@@ -5,6 +5,7 @@
       <name>edge-19p</name>
       <display_name>EDGE-19P-fpga</display_name>
       <type>fpga</type>
+      <jtag_khz>10000</jtag_khz>
       <fpga_info>
         <part>xcku19p-ffvj1760-3-e</part>
         <image_size>65244908</image_size>
