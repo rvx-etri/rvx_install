@@ -29,7 +29,7 @@ PYTHON_CMD_LIST = install windows_binary ssh misc config \
 									sync sync_gui sync_ocd resync \
 									enable_debug disable_debug check_remote_log tool_config \
 									read_only after_update \
-                  example \
+									example \
 									check
 
 ${PYTHON_CMD_LIST}:%:
@@ -41,15 +41,56 @@ gui:
 platform_gui:
 	@cd ./platform && make gui
 
-compiler:
-	rm -rf ./rvx_binary
-	git clone https://bitbucket.org/kyuseung_han/rvx_binary.git
-	cd ./rvx_binary && make config
-	cd ./rvx_binary && make compiler
-	make config
-	-rm -rf ./.rvx_tool_config
-	-rm -rf ./sync
-	@echo "source ./rvx_setup.sh"
-	@echo "'make resync'"
+check_mini_home:
+	$(if $(RVX_MINI_HOME), , $(error RVX_MINI_HOME is NOT defined))
 
-.PHONY: ${PYTHON_CMD_LIST} compiler
+check_linux:
+	@uname
+
+RVX_BINARY_DIR=${CURDIR}/rvx_binary
+RVX_STANDALONE_TAG=this_git_is_stand_alone
+RVX_ENV_BAK_DIR=${CURDIR}/env_bak
+
+compiler: check_linux check_mini_home
+	@if [ ! -d ${RVX_BINARY_DIR} ] ; \
+	then \
+		git clone https://bitbucket.org/kyuseung_han/rvx_binary.git; \
+		cd ${RVX_BINARY_DIR} && make --no-print-directory config; \
+		cd ${RVX_BINARY_DIR} && make --no-print-directory compiler; \
+		make --no-print-directory config; \
+		rm -rf ./.rvx_tool_config; \
+		rm -rf ./sync; \
+	fi
+	@. ./rvx_setup.sh
+	@echo make sync
+	@make --no-print-directory sync
+
+freeze: compiler add_freeze_tag
+
+unfreeze: remove_freeze_tag
+
+add_freeze_tag:
+	-@touch ./${RVX_STANDALONE_TAG}
+
+remove_freeze_tag:
+	-@rm -rf ./${RVX_STANDALONE_TAG}
+
+git_add_for_freeze:
+	@git add -f ./${RVX_STANDALONE_TAG}
+	@git add -f ./env
+
+git_rm_for_unfreeze:
+	-@git rm -rf ./${RVX_STANDALONE_TAG}
+	-@if [ ! -d ${RVX_ENV_BAK_DIR} ] ; \
+	then \
+		mv ./env ./env_bak; \
+	fi
+	-@git rm -rf ./env
+	-@rm -rf ./env
+	-@mv ${RVX_ENV_BAK_DIR} ./env
+
+freeze_git: freeze git_add_for_freeze
+
+unfreeze_git: unfreeze git_rm_for_unfreeze
+
+.PHONY: ${PYTHON_CMD_LIST} check_linux check_mini_home compiler

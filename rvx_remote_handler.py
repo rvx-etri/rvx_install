@@ -51,7 +51,7 @@ class RemoteHandler:
     if is_linux:
       local_cmd = 'sshpass -p {0} ssh -p{1} {2}@{3} \"bash -l -c \'{4}\'\"'.format(self.passwd, self.ssh_port, self.username, self.ip_address, cmd)
     else:
-      local_cmd = '{0} {1}@{2} -pw {3} -P {4} \"export DISPLAY=localhost:10.0;{5}\"'.format(self.plink, self.username, self.ip_address, self.passwd, self.ssh_port, cmd)
+      local_cmd = '{0} {1}@{2} -pw {3} -P {4} \"export DISPLAY=localhost:10.0;bash -l -c \'{5}\'\"'.format(self.plink, self.username, self.ip_address, self.passwd, self.ssh_port, cmd)
     return local_cmd
     
   def store_key_in_cache(self):
