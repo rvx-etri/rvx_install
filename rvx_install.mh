@@ -61,7 +61,6 @@ compiler: check_linux check_mini_home
 		rm -rf ./.rvx_tool_config; \
 		rm -rf ./sync; \
 	fi
-	@. ./rvx_setup.sh
 	@echo make sync
 	@make --no-print-directory sync
 
