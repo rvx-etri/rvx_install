@@ -121,6 +121,7 @@ class RvxMiniHome():
     self.devkit.get_remote_handler().request_ssh('make cloud.check > /dev/null 2>&1')
     self.devkit.get_remote_handler().request_sftp_get(remote_info_filename, '.', self.home_path)
     remote_info_file = self.home_path / remote_info_filename
+    assert remote_info_file.is_file(), remote_info_file
     remote_info_dict = RvxMiniHome.generate_info_dict(remote_info_file)
     
     git_update_is_required = True
@@ -149,6 +150,7 @@ class RvxMiniHome():
         self.generate_local_info_file(remote_info_dict)
         if not git_update_is_required:
           self.devkit.add_log(f'Sync Success: New update ({self.devkit.config.username}@{self.devkit.config.ip_address})', 'done')
+        remote_info_file.unlink()
       else:
         self.devkit.add_log(f'Sync FAIL: please retry ({self.devkit.config.username}@{self.devkit.config.ip_address})', 'error')
       self.update_example()
