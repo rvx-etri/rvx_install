@@ -24,9 +24,9 @@ include ./rvx_init.mh
 -include ./rvx_each.mh
 -include ${RVX_ENV}/makefile/rvx_home.mh
 
-PYTHON_CMD_LIST = install windows_binary ssh misc config \
+PYTHON_CMD_LIST = install gnome windows_binary ssh misc config \
 									clean distclean \
-									sync sync_gui sync_ocd resync \
+									sync sync_gui sync_ocd resync sync_version \
 									enable_debug disable_debug check_remote_log tool_config \
 									read_only after_update \
 									example \

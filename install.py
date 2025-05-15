@@ -50,7 +50,7 @@ if __name__ == '__main__':
   if not args.cmd:
     assert 0
   elif args.cmd=='install':
-    cmd_list = ('windows_binary', 'ssh', 'minicom', 'misc', 'config')
+    cmd_list = ('windows_binary', 'gnome', 'ssh', 'minicom', 'misc', 'config')
   else:
     cmd_list = [args.cmd]
     if 'clean' in args.cmd:
@@ -104,6 +104,16 @@ if __name__ == '__main__':
         if correct_path:
           print(f'[INFO] Path variable is updated successfully')
 
+    elif cmd=='gnome':
+      if is_windows:
+        pass
+      elif is_centos:
+        execute_shell_cmd(make_cmd_sudo('yum install -y gnome-terminal', devkit.get_sudo_passwd()), home_path)
+      elif is_ubuntu:
+        execute_shell_cmd(make_cmd_sudo('apt install -y gnome-terminal', devkit.get_sudo_passwd()), home_path)
+      else:
+        assert 0
+    
     elif cmd=='ssh':
       if is_windows:
         pass
@@ -185,6 +195,10 @@ if __name__ == '__main__':
       mini_home = RvxMiniHome(devkit)
       mini_home.resync()
 
+    elif cmd=='sync_version':
+      mini_home = RvxMiniHome(devkit)
+      devkit.handle_output(mini_home.version)
+
     elif cmd=='sync_gui':
       execute_shell_cmd('make gui', config.install_path)
 
@@ -264,6 +278,11 @@ if __name__ == '__main__':
           print('Please update Path NOT to find \"sh\" binary')
         else:
           print('OKAY')
+      
+      print('\n## RVX version ##')
+      mini_home = RvxMiniHome(devkit)
+      print(mini_home.home_path)
+      print(mini_home.version)
 
     else:
       assert 0

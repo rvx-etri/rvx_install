@@ -58,18 +58,19 @@ class RvxMiniHome():
   @property
   def sync_path(self):
     return self.home_path / 'sync'
-
-  def get_local_info(self):
-    local_info_file = self.devkit.get_sync_info_path
-    if local_info_file.is_file():
-      local_info = local_info_file.read_text().split('\n')
+  
+  @property
+  def version(self):
+    if self.devkit.get_sync_info_path.exists():
+      local_info_dict = RvxMiniHome.generate_info_dict(self.devkit.get_sync_info_path)
+      result = local_info_dict['rvx_version'][0:10] + '-' + local_info_dict['rvx_server_manager']
     else:
-      local_info = (None,None,None)
-    return local_info
+      result = 'Not synced'
+    return result
 
-  def _update_info(self, remote_info_file:Path):
+  def generate_local_info_file(self, info_dict:dict):
     local_info_file = self.devkit.get_sync_info_path
-    remote_info_file.replace(local_info_file)
+    local_info_file.write_text('\n'.join([f'{key}:{value}' for key, value in info_dict.items()]))
     
   @staticmethod
   def generate_info_dict(info_file:Path):
@@ -130,7 +131,7 @@ class RvxMiniHome():
       git_update_is_required = False
     local_info_dict = RvxMiniHome.generate_info_dict(self.devkit.get_sync_info_path)
     if local_info_dict.get('rvx_server_manager')==remote_info_dict.get('rvx_server_manager'):
-      if remote_info_dict.get('synced')=='true':
+      if remote_info_dict.get('synced_before')=='true':
         sync_is_required = False
       
     self.devkit.add_new_job('sync', True)
@@ -144,7 +145,8 @@ class RvxMiniHome():
       execute_shell_cmd(f'{self.devkit.config.python3_cmd} {sync_file}', self.home_path)
       if (self.home_path/'env').is_dir():
         self.devkit.get_remote_handler().request_ssh(f'touch ./{sync_history_filename}')
-        self._update_info(remote_info_file)
+        del remote_info_dict['synced_before']
+        self.generate_local_info_file(remote_info_dict)
         if not git_update_is_required:
           self.devkit.add_log(f'Sync Success: New update ({self.devkit.config.username}@{self.devkit.config.ip_address})', 'done')
       else:
