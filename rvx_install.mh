@@ -70,6 +70,7 @@ compiler: _check_linux
 		rm -rf ./.rvx_tool_config; \
 	fi
 	@make --no-print-directory install_sync
+	@echo "Warning: Please reopen the terminal or source 'rvx_setup.sh' again"
 
 ########
 # fork #
