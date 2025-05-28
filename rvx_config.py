@@ -165,12 +165,12 @@ class RvxConfig():
     return self.home_path / 'rvx_install' / 'install.py'
   
   @property
-  def stand_alone_tag_path(self):
-    return self.home_path / 'this_git_is_stand_alone'
+  def freeze_tag_path(self):
+    return self.home_path / 'this_git_is_frozen'
   
   @property
-  def is_stand_alone(self):
-    return self.stand_alone_tag_path.is_file()
+  def is_frozen(self):
+    return self.freeze_tag_path.is_file()
   
   @property
   def server_mode_path(self):
@@ -274,7 +274,7 @@ class RvxConfig():
   
   @property
   def is_client(self):
-    return self.is_mini and (not self.is_stand_alone)
+    return self.is_mini and (not self.is_frozen)
 
   @property
   def is_server(self):

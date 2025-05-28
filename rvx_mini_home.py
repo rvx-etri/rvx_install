@@ -60,12 +60,30 @@ class RvxMiniHome():
     return self.home_path / 'sync'
   
   @property
+  def install_sync_path(self):
+    return self.sync_path / 'install_sync.py'
+  
+  @property
+  def clinet_sync_complete_path(self):
+    return self.sync_path / 'clinet_sync_complete'
+  
+  def set_clinet_sync_complete(self):
+    return (self.sync_path / 'clinet_sync_complete').touch(exist_ok=True)
+  
+  def reset_clinet_sync_complete(self):
+    return (self.sync_path / 'clinet_sync_complete').unlink(missing_ok=True)
+  
+  @property
+  def is_clinet_sync_complete(self):
+    return (self.sync_path / 'clinet_sync_complete').is_file()
+  
+  @property
   def version(self):
+    result = 'Not synced'
     if self.devkit.get_sync_info_path.exists():
       local_info_dict = RvxMiniHome.generate_info_dict(self.devkit.get_sync_info_path)
-      result = local_info_dict['rvx_version'][0:10] + '-' + local_info_dict['rvx_server_manager']
-    else:
-      result = 'Not synced'
+      if 'rvx_version' in local_info_dict and 'rvx_server_manager' in local_info_dict:
+        result = local_info_dict['rvx_version'][0:10] + '-' + local_info_dict['rvx_server_manager']
     return result
 
   def generate_local_info_file(self, info_dict:dict):
@@ -137,27 +155,39 @@ class RvxMiniHome():
       
     self.devkit.add_new_job('sync', True)
     if git_update_is_required:
-      self.devkit.add_log(f'Sync WARNING: please update ./rvx_install (checkout: {required_rvx_install_version})', 'done')
+      self.devkit.add_log(f'Sync Warning: Please Update ./rvx_install (checkout to {required_rvx_install_version})', 'done')
     if sync_is_required:
       remove_directory(self.sync_path)
       self.devkit.get_remote_handler().extract_tar_file(remote_sync_filename, '.', self.home_path)
-      sync_file = self.sync_path / 'install_sync.py'
-      assert sync_file.is_file(), sync_file
-      execute_shell_cmd(f'{self.devkit.config.python3_cmd} {sync_file}', self.home_path)
-      if (self.home_path/'env').is_dir():
+      self._install_sync()
+      if self.is_clinet_sync_complete:
+        assert (self.home_path/'env').is_dir
         self.devkit.get_remote_handler().request_ssh(f'touch ./{sync_history_filename}')
         del remote_info_dict['synced_before']
         self.generate_local_info_file(remote_info_dict)
         if not git_update_is_required:
-          self.devkit.add_log(f'Sync Success: New update ({self.devkit.config.username}@{self.devkit.config.ip_address})', 'done')
+          self.devkit.add_log(f'Sync Success with Update ({self.devkit.config.username}@{self.devkit.config.ip_address})', 'done')
         remote_info_file.unlink()
       else:
-        self.devkit.add_log(f'Sync FAIL: please retry ({self.devkit.config.username}@{self.devkit.config.ip_address})', 'error')
-      self.update_example()
+        self.devkit.add_log(f'Sync Fail: Please Retry ({self.devkit.config.username}@{self.devkit.config.ip_address})', 'error')
     else:
       remote_info_file.unlink()
       if not git_update_is_required:
-        self.devkit.add_log(f'Sync Success: No update ({self.devkit.config.username}@{self.devkit.config.ip_address})', 'done')
+        self.devkit.add_log(f'Sync Success ({self.devkit.config.username}@{self.devkit.config.ip_address})', 'done')
+  
+  def _install_sync(self):
+    assert self.install_sync_path.is_file()
+    execute_shell_cmd(f'{self.devkit.config.python3_cmd} {self.install_sync_path}', self.home_path)
+    self.update_example()
+    self.set_clinet_sync_complete()
+  
+  def install_sync(self):
+    self.devkit.add_new_job('install_sync', True)
+    if self.install_sync_path.is_file():
+      self._install_sync()
+      self.devkit.add_log(f'Install Sync Success', 'done')
+    else:
+      self.devkit.add_log(f'Install Sync Fail: No Sync File', 'done')
 
   def resync(self):
     remove_directory(self.sync_path)

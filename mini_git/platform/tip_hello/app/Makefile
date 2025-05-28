@@ -35,8 +35,11 @@ endif
 
 ENGINE_WS=${PLATFORM_DIR}/..
 ENGINE_TARGET=app
-ENGINE_CMD_LIST=new delete clean eclipse
+ENGINE_USER_CMD_LIST=new delete clean
+ENGINE_USER_CMD_ADV_LIST= 
+ENGINE_SYSTEM_CMD_LIST=eclipse
 ENGINE_PARA= -p ${PLATFORM_NAME} -a ${APP_NAME}
+GUI_CMD_PARA_LIST=new:APP_NAME delete:APP_NAME
 include ${RVX_ENV}/engine/rvx_make2engine.mh
 
 APP_BASE_DIR=${CURDIR}

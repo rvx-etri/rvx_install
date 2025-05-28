@@ -45,6 +45,12 @@ def get_git_name(path:Path):
   git_name = re.findall(re_git_name,result, re.DOTALL)[0]
   return git_name
 
+def get_git_date(path:Path):
+  assert path.is_dir(), path
+  result = subprocess.run('git log -1 --date=format:\'%Y-%m-%d-%H-%M-%S-%z\' --format=%cd', cwd=path, shell=True, stdout=subprocess.PIPE).stdout.decode(encoding, errors='ignore')
+  git_date = result.split('\n')[0]
+  return git_date
+
 def check_if_path_is_tracked_by_git(git_repo:Path, path:Path):
   exist = False
   git_repo_abs = git_repo.expanduser().resolve()
@@ -80,7 +86,9 @@ if __name__ == "__main__":
   if not sep:
     sep = ''
 
-  if args.cmd=='version':
+  if 0:
+    pass
+  elif args.cmd=='version':
     info_text = sep.join([get_git_version(Path(x)) for x in args.path])
   elif args.cmd=='url':
     info_text = sep.join([get_git_url(Path(x)) for x in args.path])
@@ -89,6 +97,8 @@ if __name__ == "__main__":
   elif args.cmd=='check':
     assert len(args.path)==2, args.path
     info_text = check_if_path_is_tracked(Path(args.path[0]), Path(args.path[1]))
+  elif args.cmd=='date':
+    info_text = sep.join([get_git_date(Path(x)) for x in args.path])
   else:
     assert 0, args.cmd
 

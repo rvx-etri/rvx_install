@@ -89,7 +89,12 @@ check_python:
 	@${PYTHON3_CMD} --version
 
 install_pip:
-	@echo ${PYTHON3_CMD} -m ensurepip
+	@echo ${PYTHON3_CMD} -m ensurepip --upgrade
+	@echo PYTHON3_CMD=${PYTHON3_CMD}>${PYTHON_CONFIG_FILE}
+
+install_pip_old:
+	@wget https://bootstrap.pypa.io/get-pip.py
+	@echo ${PYTHON3_CMD} ./get-pip.py
 	@echo PYTHON3_CMD=${PYTHON3_CMD}>${PYTHON_CONFIG_FILE}
 
 check_pip:
@@ -98,7 +103,7 @@ check_pip:
 
 fix_pip: install_pip
 
-USER_PIP_LIST=distro numpy cryptography pyelftools configparser Pillow
+USER_PIP_LIST=setuptools distro numpy cryptography pyelftools configparser Pillow
 
 pip_private:
 	-${PIP3_CMD} install --upgrade pip
@@ -137,6 +142,9 @@ update_rvx_init:
 submodule:
 	git submodule init
 	git submodule update --force
+
+submodule_lfs: submodule
+	git submodule foreach --recursive git lfs pull
 
 check_rvx_init:
 	@echo ${RVX_INIT_HOME}
