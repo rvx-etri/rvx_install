@@ -22,8 +22,8 @@ set_property -dict { PACKAGE_PIN D15 IOSTANDARD LVCMOS33 } [get_ports { arducam_
 set_property -dict { PACKAGE_PIN C15 IOSTANDARD LVCMOS33 } [get_ports { arducam_spi_sclk }]; # pin 4
 
 ##Pmod Header JB Lower
-set_property -dict { PACKAGE_PIN K15   IOSTANDARD LVCMOS33 } [get_ports { arducam_i2c_sclk }]; #IO_L24P_T3_RS1_15 Sch=jb_p[4]
-set_property -dict { PACKAGE_PIN J15   IOSTANDARD LVCMOS33 } [get_ports { arducam_i2c_sdata }]; #IO_L24N_T3_RS0_15 Sch=jb_n[4]
+set_property -dict { PACKAGE_PIN K15   IOSTANDARD LVCMOS33 } [get_ports { arducam_i2c_sclk }]; # pin 9
+set_property -dict { PACKAGE_PIN J15   IOSTANDARD LVCMOS33 } [get_ports { arducam_i2c_sdata }]; # pin 10
 
 set_property PULLUP true [get_ports arducam_i2c_sclk ]
 set_property PULLUP true [get_ports arducam_i2c_sdata ]

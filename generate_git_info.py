@@ -35,7 +35,7 @@ def get_git_version(path:Path):
 
 def get_git_url(path:Path):
   assert path.is_dir(), path
-  result = subprocess.run('git remote -v', cwd=path, shell=True, stdout=subprocess.PIPE, encoding=encoding).stdout
+  result = subprocess.run('git config --get remote.origin.url', cwd=path, shell=True, stdout=subprocess.PIPE, encoding=encoding).stdout
   return result[:-1]
 
 def get_git_name(path:Path):
@@ -47,7 +47,13 @@ def get_git_name(path:Path):
 
 def get_git_date(path:Path):
   assert path.is_dir(), path
-  result = subprocess.run('git log -1 --date=format:\'%Y-%m-%d-%H-%M-%S-%z\' --format=%cd', cwd=path, shell=True, stdout=subprocess.PIPE).stdout.decode(encoding, errors='ignore')
+  result = subprocess.run('git log -1 --date=iso-strict --date=format:\'%Y-%m-%d-%H-%M\' --format=%cd', cwd=path, shell=True, stdout=subprocess.PIPE).stdout.decode(encoding, errors='ignore')
+  git_date = result.split('\n')[0]
+  return git_date
+
+def get_git_date_full(path:Path):
+  assert path.is_dir(), path
+  result = subprocess.run('git log -1 --date=iso-strict --date=format:\'%Y-%m-%d-%H-%M-%S-%z\' --format=%cd', cwd=path, shell=True, stdout=subprocess.PIPE).stdout.decode(encoding, errors='ignore')
   git_date = result.split('\n')[0]
   return git_date
 

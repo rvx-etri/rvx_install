@@ -30,11 +30,13 @@ from rvx_engine_util import *
 from rvx_config import *
 from rvx_devkit import *
 from generate_git_info import *
+from manage_version_info import *
 
 app_debug_config_file_name = 'app.debug.launch'
-remote_info_filename = 'cloud_info.txt'
+remote_info_filename = 'cloud_info.xml'
 remote_sync_filename = 'sync.tar.gz'
 sync_history_filename = 'synced.log'
+remote_synthesizer_filename = 'rvx_synthesizer_obfuscated.tar.gz'
 
 class RvxMiniHome():
   read_only_tag = 'this_git_is_read_only'
@@ -42,6 +44,10 @@ class RvxMiniHome():
   def __init__(self, devkit=None):
     assert devkit
     self.devkit = devkit
+    if self.devkit and self.devkit.get_sync_info_path.is_file():
+      self.local_info_config = generate_config_from_version_info(self.devkit.get_sync_info_path)
+    else:
+      self.local_info_config = None
   
   @property
   def home_path(self):
@@ -54,6 +60,22 @@ class RvxMiniHome():
   @property
   def example_path(self):
     return self.home_path / 'rvx_platform_example'
+  
+  @property
+  def binary_path(self):
+    return self.home_path / 'rvx_binary'
+  
+  @property
+  def synthesizer_path(self):
+    return self.home_path / 'rvx_synthesizer_obfuscated'
+  
+  @property
+  def synthesizer_tar_path(self):
+    return self.sync_path / remote_synthesizer_filename
+  
+  @property
+  def synthesizer_sync_info_path(self):
+    return self.synthesizer_path / self.devkit.get_sync_info_path.name
 
   @property
   def sync_path(self):
@@ -64,63 +86,130 @@ class RvxMiniHome():
     return self.sync_path / 'install_sync.py'
   
   @property
-  def clinet_sync_complete_path(self):
-    return self.sync_path / 'clinet_sync_complete'
-  
-  def set_clinet_sync_complete(self):
-    return (self.sync_path / 'clinet_sync_complete').touch(exist_ok=True)
-  
-  def reset_clinet_sync_complete(self):
-    return (self.sync_path / 'clinet_sync_complete').unlink(missing_ok=True)
+  def tool_config_path(self):
+    return self.home_path / '.rvx_tool_config'
   
   @property
-  def is_clinet_sync_complete(self):
-    return (self.sync_path / 'clinet_sync_complete').is_file()
+  def path_config_path(self):
+    return self.home_path / '.rvx_path_config'
+  
+  @property
+  def local_info_dict(self):
+    return self.local_info_config.attr_dict if self.local_info_config else {}
   
   @property
   def version(self):
     result = 'Not synced'
-    if self.devkit.get_sync_info_path.exists():
-      local_info_dict = RvxMiniHome.generate_info_dict(self.devkit.get_sync_info_path)
-      if 'rvx_version' in local_info_dict and 'rvx_server_manager' in local_info_dict:
-        result = local_info_dict['rvx_version'][0:10] + '-' + local_info_dict['rvx_server_manager']
+    if 'rvx_version.date' in self.local_info_dict.keys() and 'rvx_version.commit' in self.local_info_dict.keys() and 'rvx_library' in self.local_info_dict.keys():
+      result = '_'.join((self.local_info_dict['rvx_version.date'],self.local_info_dict['rvx_version.commit'],self.local_info_dict['rvx_library']))
     return result
-
-  def generate_local_info_file(self, info_dict:dict):
-    local_info_file = self.devkit.get_sync_info_path
-    local_info_file.write_text('\n'.join([f'{key}:{value}' for key, value in info_dict.items()]))
-    
-  @staticmethod
-  def generate_info_dict(info_file:Path):
-    info_dict = {}
-    if info_file.is_file():
-      for info in info_file.read_text().split('\n'):
-        if ':' not in info:
-          pass
-        key, value = info.split(':')
-        info_dict[key] = value
-    return info_dict
   
-  def update_example(self):
+  def _install_compiler(self):
+    rvx_binary_url = self.local_info_dict.get('rvx_binary.url')
+    git_version = self.local_info_dict.get('rvx_binary.commit')
     success = False
-    if self.example_path.is_dir():
-      local_info_dict = RvxMiniHome.generate_info_dict(self.devkit.get_sync_info_path)
-      git_version = local_info_dict.get('rvx_platform_example')
-      if git_version:
-        run_shell_cmd(f'git pull origin master', self.example_path)
-        run_shell_cmd(f'git checkout {git_version}', self.example_path)
-        success = True
+    if rvx_binary_url and git_version:
+      if self.binary_path.is_dir():
+        if get_git_url(self.binary_path)!=rvx_binary_url:
+          remove_directory(self.binary_path)
+      if not self.binary_path.is_dir():
+        run_shell_cmd(f'git clone {rvx_binary_url} {self.binary_path}', self.home_path, stderr=subprocess.STDOUT)
+      run_shell_cmd(f'git pull origin master', self.binary_path)
+      run_shell_cmd(f'git checkout {git_version}', self.binary_path)
+      run_shell_cmd(f'make --no-print-directory config', self.binary_path)
+      run_shell_cmd(f'make --no-print-directory compiler', self.binary_path)
+      self.tool_config_path.unlink(missing_ok=True)
+      success = True
     return success
   
-  def generate_example(self):
-    self.devkit.add_new_job('example', True)
-    if not self.example_path.is_dir():
-      run_shell_cmd(f'git clone https://bitbucket.org/kyuseung_han/rvx_platform_example.git {self.example_path}', self.home_path, stderr=subprocess.STDOUT)
-    success = self.update_example()
+  def install_compiler(self):
+    self.devkit.add_new_job('compiler.install', True)
+    success = self._install_compiler()
+      
     if success:
-      self.devkit.add_log(f'Example Success', 'done')
+      self.devkit.add_log(f'Compiler Success', 'done')
     else:
-      self.devkit.add_log(f'Example Fail: Sync Required', 'error')
+      self.devkit.add_log(f'Compiler Fail: Sync Required', 'error')
+  
+  def uninstall_compiler(self):
+    self.devkit.add_new_job('compiler.uninstall', True)
+    remove_directory(self.binary_path)
+    self.devkit.add_log(f'Compiler Uninstall Success', 'done')
+  
+  def _update_compiler_if_exist(self):
+    if self.binary_path.is_dir():
+      self._install_compiler()
+  
+  def _install_example(self):
+    rvx_platform_example_url = self.local_info_dict.get('rvx_platform_example.url')
+    git_version = self.local_info_dict.get('rvx_platform_example.commit')
+    success = False
+    if rvx_platform_example_url and git_version:
+      if self.example_path.is_dir():
+        if get_git_url(self.example_path)!=rvx_platform_example_url:
+          remove_directory(self.example_path)
+      if not self.example_path.is_dir():
+        run_shell_cmd(f'git clone {rvx_platform_example_url} {self.example_path}', self.home_path, stderr=subprocess.STDOUT)
+      run_shell_cmd(f'git pull origin master', self.example_path)
+      run_shell_cmd(f'git checkout {git_version}', self.example_path)
+      success = True
+    return success
+  
+  def install_example(self):
+    self.devkit.add_new_job('example.install', True)
+    success = self._install_example()
+      
+    if success:
+      self.devkit.add_log(f'Example Install Success', 'done')
+    else:
+      self.devkit.add_log(f'Example Install Fail: Sync Required', 'error')
+  
+  def uninstall_example(self):
+    self.devkit.add_new_job('example.uninstall', True)
+    remove_directory(self.example_path)
+    self.devkit.add_log(f'Example Uninstall Success', 'done')
+  
+  def _update_example_if_exist(self):
+    if self.example_path.is_dir():
+      self._install_example()
+  
+  def _install_synthesizer(self):
+    assert self.sync_path.is_dir()
+    install_new = True
+    if self.synthesizer_sync_info_path.is_file():
+      synthesizer_sync_info_config = generate_config_from_version_info(self.synthesizer_sync_info_path)
+      if self.local_info_dict.get('rvx_synthesizer_obfuscated.commit')==synthesizer_sync_info_config.get_attr('rvx_synthesizer_obfuscated.commit'):
+        install_new = False
+    if install_new:
+      remove_directory(self.synthesizer_path)
+      if not self.synthesizer_tar_path.is_file():
+        self.devkit.get_remote_handler().request_sftp_get(remote_synthesizer_filename, '.', self.sync_path)
+      temp_path = self.sync_path / self.synthesizer_path.name
+      remove_directory(temp_path)
+      extract_file(self.synthesizer_tar_path)
+      assert temp_path.is_dir()
+      move_directory(temp_path, self.synthesizer_path)
+      self.local_info_config.export_file(self.synthesizer_sync_info_path)
+      self.path_config_path.unlink(missing_ok=True)
+    return True
+  
+  def install_synthesizer(self):
+    self.devkit.add_new_job('synthesizer.install', True)
+    success = self._install_synthesizer()
+      
+    if success:
+      self.devkit.add_log(f'Synthesizer Success', 'done')
+    else:
+      self.devkit.add_log(f'Synthesizer Fail: Sync Required', 'error')
+  
+  def uninstall_synthesizer(self):
+    self.devkit.add_new_job('synthesizer.uninstall', True)
+    remove_directory(self.synthesizer_path)
+    self.devkit.add_log(f'Synthesizer Uninstall Success', 'done')
+
+  def _update_synthesizer_if_exist(self):
+    if self.synthesizer_path.is_dir():
+      self._install_synthesizer()
 
   def sync(self):
     is_install_complete = True
@@ -140,46 +229,45 @@ class RvxMiniHome():
     self.devkit.get_remote_handler().request_sftp_get(remote_info_filename, '.', self.home_path)
     remote_info_file = self.home_path / remote_info_filename
     assert remote_info_file.is_file(), remote_info_file
-    remote_info_dict = RvxMiniHome.generate_info_dict(remote_info_file)
+    remote_info_config = generate_config_from_version_info(remote_info_file)
     
     git_update_is_required = True
     sync_is_required = True
     
-    required_rvx_install_version = remote_info_dict.get('rvx_install')
+    required_rvx_install_version = remote_info_config.get_attr('rvx_install.commit')
     if get_git_version(self.install_path)==required_rvx_install_version:
       git_update_is_required = False
-    local_info_dict = RvxMiniHome.generate_info_dict(self.devkit.get_sync_info_path)
-    if local_info_dict.get('rvx_server_manager')==remote_info_dict.get('rvx_server_manager'):
-      if remote_info_dict.get('synced_before')=='true':
+    if self.local_info_dict.get('rvx_version.commit')==remote_info_config.get_attr('rvx_version.commit'):
+      if remote_info_config.get_attr('synced_before')=='true':
         sync_is_required = False
       
-    self.devkit.add_new_job('sync', True)
-    if git_update_is_required:
-      self.devkit.add_log(f'Sync Warning: Please Update ./rvx_install (checkout to {required_rvx_install_version})', 'done')
+    self.devkit.add_new_job('sync', True)      
     if sync_is_required:
       remove_directory(self.sync_path)
       self.devkit.get_remote_handler().extract_tar_file(remote_sync_filename, '.', self.home_path)
+      
       self._install_sync()
-      if self.is_clinet_sync_complete:
-        assert (self.home_path/'env').is_dir
-        self.devkit.get_remote_handler().request_ssh(f'touch ./{sync_history_filename}')
-        del remote_info_dict['synced_before']
-        self.generate_local_info_file(remote_info_dict)
-        if not git_update_is_required:
-          self.devkit.add_log(f'Sync Success with Update ({self.devkit.config.username}@{self.devkit.config.ip_address})', 'done')
-        remote_info_file.unlink()
+      assert (self.home_path/'env').is_dir()
+      self.devkit.get_remote_handler().request_ssh(f'touch ./{sync_history_filename}')
+      self.local_info_config = remote_info_config
+      self.local_info_dict['synced_before'] = 'true'
+      self.local_info_config.export_file(self.devkit.get_sync_info_path)
+      remote_info_file.unlink()
+      
+      if git_update_is_required:
+        self.devkit.add_log(f'Sync Warning: Please Update ./rvx_install (checkout to {required_rvx_install_version})', 'done')
       else:
-        self.devkit.add_log(f'Sync Fail: Please Retry ({self.devkit.config.username}@{self.devkit.config.ip_address})', 'error')
+        self.devkit.add_log(f'Sync Success with Update ({self.devkit.config.username}@{self.devkit.config.ip_address})', 'done')
     else:
       remote_info_file.unlink()
-      if not git_update_is_required:
-        self.devkit.add_log(f'Sync Success ({self.devkit.config.username}@{self.devkit.config.ip_address})', 'done')
+      self.devkit.add_log(f'Sync Success ({self.devkit.config.username}@{self.devkit.config.ip_address})', 'done')
   
   def _install_sync(self):
     assert self.install_sync_path.is_file()
     execute_shell_cmd(f'{self.devkit.config.python3_cmd} {self.install_sync_path}', self.home_path)
-    self.update_example()
-    self.set_clinet_sync_complete()
+    self._update_compiler_if_exist()
+    self._update_example_if_exist()
+    self._update_synthesizer_if_exist()
   
   def install_sync(self):
     self.devkit.add_new_job('install_sync', True)

@@ -70,7 +70,7 @@ class RvxDevkit():
 
   @property
   def get_sync_info_path(self):
-    return self.config.home_path / 'sync' / 'client_info.txt'
+    return self.config.home_path / 'sync' / 'client_info.xml'
   
   @property
   def server_log_path(self):

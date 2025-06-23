@@ -33,7 +33,9 @@ PYTHON_CMD_LIST = install gnome windows_binary ssh misc config \
 									sync resync install_sync sync_version \
 									enable_debug disable_debug check_remote_log tool_config \
 									read_only after_update \
-									example \
+									example example.install example.uninstall\
+									compiler compiler.install compiler.uninstall\
+									synthesizer synthesizer.install synthesizer.uninstall\
 									freeze unfreeze git_add_result\
 									check
 
@@ -54,22 +56,6 @@ platform_gui:
 
 update_mini_git:
 	@cd ./rvx_install && make setup_mini_git
-
-############
-# compiler #
-############
-
-RVX_BINARY_DIR=${CURDIR}/rvx_binary
-
-compiler: _check_linux
-	@if [ ! -d ${RVX_BINARY_DIR} ] ; \
-	then \
-		git clone https://bitbucket.org/kyuseung_han/rvx_binary.git; \
-		cd ${RVX_BINARY_DIR} && make --no-print-directory config; \
-		cd ${RVX_BINARY_DIR} && make --no-print-directory compiler; \
-		rm -rf ./.rvx_tool_config; \
-	fi
-	@make --no-print-directory install_sync
 
 ########
 # fork #

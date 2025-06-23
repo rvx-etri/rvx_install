@@ -14,8 +14,7 @@
 ## 2024-01-24 Sukho Lee (shlee99@etri.re.kr)
 ## ****************************************************************************
 ## ****************************************************************************
-# Slide Switch
-set_property -dict { PACKAGE_PIN D22   IOSTANDARD LVCMOS33 } [get_ports { gpio0 }];
-set_property -dict { PACKAGE_PIN C22   IOSTANDARD LVCMOS33 } [get_ports { gpio1 }];
-set_property -dict { PACKAGE_PIN B23   IOSTANDARD LVCMOS33 } [get_ports { gpio2 }];
-set_property -dict { PACKAGE_PIN A23   IOSTANDARD LVCMOS33 } [get_ports { gpio3 }];
+set_property -dict { PACKAGE_PIN D22   IOSTANDARD LVCMOS33 } [get_ports { switch_button_readymade_0 }];
+set_property -dict { PACKAGE_PIN C22   IOSTANDARD LVCMOS33 } [get_ports { switch_button_readymade_1 }];
+set_property -dict { PACKAGE_PIN B23   IOSTANDARD LVCMOS33 } [get_ports { switch_button_readymade_2 }];
+set_property -dict { PACKAGE_PIN A23   IOSTANDARD LVCMOS33 } [get_ports { switch_button_readymade_3 }];

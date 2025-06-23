@@ -222,9 +222,29 @@ if __name__ == '__main__':
             config.freeze_tag_path.unlink(missing_ok=True)
             config.path_config_path.unlink(missing_ok=True)
 
-        elif cmd == 'example':
+        elif cmd == 'example' or cmd == 'example.install':
             mini_home = RvxMiniHome(devkit)
-            mini_home.generate_example()
+            mini_home.install_example()
+
+        elif cmd == 'example.uninstall':
+            mini_home = RvxMiniHome(devkit)
+            mini_home.uninstall_example()
+
+        elif cmd == 'compiler' or cmd == 'compiler.install':
+            mini_home = RvxMiniHome(devkit)
+            mini_home.install_compiler()
+
+        elif cmd == 'compiler.uninstall':
+            mini_home = RvxMiniHome(devkit)
+            mini_home.uninstall_compiler()
+    
+        elif cmd == 'synthesizer' or cmd == 'synthesizer.install':
+            mini_home = RvxMiniHome(devkit)
+            mini_home.install_synthesizer()
+
+        elif cmd == 'synthesizer.uninstall':
+            mini_home = RvxMiniHome(devkit)
+            mini_home.uninstall_synthesizer()
 
         elif cmd == 'read_only':
             (home_path/RvxMiniHome.read_only_tag).touch()
@@ -296,7 +316,7 @@ if __name__ == '__main__':
     if args.cmd.endswith('clean'):
         engine_log.clean()
     else:
-        if not args.cmd.endswith(devkit.engine_log.current_job.name):
+        if not devkit.engine_log.current_job.name.startswith(args.cmd):
             devkit.engine_log.add_new_job(args.cmd, True, 'done')
         devkit.engine_log.export_file()
         devkit.check_log(True)

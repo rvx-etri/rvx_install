@@ -293,7 +293,7 @@ class RvxConfig():
     if self.is_server:
       assert self.home_path==self.devkit_path, (self.home_path, self.devkit_path)
 
-    self.path_config = RvxPathConfig(self.path_config_path, self.home_path, self.devkit_path, self.is_client)
+    self.path_config = RvxPathConfig(self.path_config_path, self.home_path, self.devkit_path, self.is_mini)
     self.tool_config = RvxToolConfig(self.tool_config_path)
     self.key_manager = KeyFileManager(self.key_path)
     if not self.key_manager.key:
