@@ -90,7 +90,7 @@ set_property PACKAGE_PIN        W38     [get_ports {    c0_ddr4_dqs_c[3]        
 set_property PACKAGE_PIN        AC41    [get_ports {    c0_ddr4_dqs_t[0]             }]
 set_property PACKAGE_PIN        AB32    [get_ports {    c0_ddr4_dqs_t[1]             }]
 set_property PACKAGE_PIN        AA40    [get_ports {    c0_ddr4_dqs_t[2]             }]
-set_property PACKAGE_PIN        W38     [get_ports {    c0_ddr4_dqs_t[3]             }]
+set_property PACKAGE_PIN        W37     [get_ports {    c0_ddr4_dqs_t[3]             }]
 
 set_property PACKAGE_PIN        AG42    [get_ports {    c0_ddr4_odt                }]
 set_property PACKAGE_PIN        AC34    [get_ports {    c0_ddr4_bg                 }]

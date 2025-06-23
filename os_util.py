@@ -64,6 +64,7 @@ def run_shell_cmd(cmd:str, cwd:Path=None, stdout=subprocess.PIPE, stderr=subproc
       print(result)
   return result
 
+# depredicated
 def execute_shell_cmd(cmd:str, cwd:Path=None, background:bool=False, prints_cmd:bool=False):
   if background:
     if is_linux:
