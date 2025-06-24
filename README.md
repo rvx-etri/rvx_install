@@ -15,13 +15,13 @@
 ## ****************************************************************************
 ## ****************************************************************************
 
-[RISC-V eXpress (RVX)]
-RISC-V eXpress (RVX) is the HW/SW development kit for developing MCU-level low power SoCs.
-https://ieeexplore.ieee.org/document/9208740
+# RISC-V eXpress
 
-[git management]
-DO NOT add any file in this current directory.
-You CAN add files in ./platform or its subdirectories if you want.
+**RISC-V eXpress (RVX)** is a hardware/software development kit designed for building low-power System-on-Chips (SoCs) for embedded systems.  
+It is suitable for applications such as microcontroller units (MCUs) and lightweight application processors.
 
-[install]
-See "./rvx_install/rvx_install_manual.pdf"
+## Manual
+
+You can access the manual here:  
+[https://riscvexpress.github.io](https://riscvexpress.github.io)
+

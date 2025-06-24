@@ -129,7 +129,7 @@ class RvxMiniHome():
     success = self._install_compiler()
       
     if success:
-      self.devkit.add_log(f'Compiler Success', 'done')
+      self.devkit.add_log(f'Compiler Success: Reopen the terminal', 'done')
     else:
       self.devkit.add_log(f'Compiler Fail: Sync Required', 'error')
   
@@ -137,7 +137,7 @@ class RvxMiniHome():
     self.devkit.add_new_job('compiler.uninstall', True)
     remove_directory(self.binary_path)
     self.tool_config_path.unlink(missing_ok=True)
-    self.devkit.add_log(f'Compiler Uninstall Success', 'done')
+    self.devkit.add_log(f'Compiler Uninstall Success: Reopen the terminal', 'done')
   
   def _update_compiler_if_exist(self):
     if self.binary_path.is_dir():
