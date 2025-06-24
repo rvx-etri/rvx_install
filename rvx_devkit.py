@@ -28,6 +28,7 @@ from rvx_engine_log import *
 
 import import_util
 from generate_git_info import *
+from manage_version_info import *
 
 class RvxDevkit():
   @staticmethod
@@ -38,18 +39,6 @@ class RvxDevkit():
       if not x.is_dir():
         x = None
     return x
-  
-  @property
-  def is_client(self): # with mini
-    return self.config.is_client
-  
-  @property
-  def is_server(self):
-    return self.config.is_server
-
-  @property
-  def is_local(self): # my machine
-    return (not self.config.is_server)
 
   def __init__(self, config:RvxConfig, output_file:str, engine_log:RvxEngineLog, called_by_gui:bool):
     self.config = config
@@ -58,7 +47,7 @@ class RvxDevkit():
     self.called_by_gui = called_by_gui
     self.remote_handler = RemoteHandler(self.config)
     self.is_debug_mode = (self.config.home_path / 'debug').is_file()
-    if self.is_local and self.is_debug_mode:
+    if self.config.is_local and self.is_debug_mode:
       print('Debug On!')
 
   def get_env_path(self, *args):
@@ -71,6 +60,13 @@ class RvxDevkit():
   @property
   def get_sync_info_path(self):
     return self.config.home_path / 'sync' / 'client_info.xml'
+
+  def get_client_sync_config(self):
+    if self.get_sync_info_path.is_file():
+      client_sync_config = generate_config_from_version_info(self.get_sync_info_path)
+    else:
+      client_sync_config = None
+    return client_sync_config
   
   @property
   def server_log_path(self):
@@ -139,21 +135,21 @@ class RvxDevkit():
       self.engine_log.set_status('done')
 
   def check_log(self, print_if_local:bool=False):
-    self.engine_log.export_file(self.is_server)
+    self.engine_log.export_file(self.config.is_server)
     status = self.engine_log.current_job.status
     if status=='error' or status=='fail':
-      if self.is_local:
+      if self.config.is_local:
         print(self.engine_log.current_job)
       if status=='error':
         exit(11)
       else:
         exit(21)
     else:
-      if self.is_local and print_if_local:
+      if self.config.is_local and print_if_local:
         print(self.engine_log.current_job)
 
   def make_at_server(self, make_target:str='', background:bool=False):
-    assert self.is_client
+    assert self.config.is_client
     remote_cmd_list = []
     remote_cmd_list.append('make --no-print-directory')
     remote_cmd_list.append(make_target)
@@ -184,7 +180,7 @@ class RvxDevkit():
         self.engine_log.append_job(job)
 
   def download_server_log(self):
-    assert self.is_client
+    assert self.config.is_client
     remove_directory(self.server_log_path)
     self.server_log_path.mkdir()
     self.get_remote_handler().extract_tar_file(self.engine_log.log_tar_file.name, '.', self.server_log_path)
@@ -207,14 +203,15 @@ class RvxDevkit():
     return git_name
 
   def devkit_git_info(self):
-    if self.is_client:
-      git_version = self.get_sync_info_path.read_text().split('\n')[0][:8]
+    if self.config.is_mini:
+      client_sync_config = self.get_client_sync_config()
+      git_version = client_sync_config.get_attr('rvx_version.commit')
     else:
       git_version = get_git_version(self.config.devkit_path)
     return git_version
 
   def username(self):
-    if self.is_client:
+    if self.config.is_mini:
       username = self.config.username
     else:
       username = getpass.getuser()

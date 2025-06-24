@@ -146,8 +146,6 @@ if __name__ == '__main__':
             line_list = []
             if is_linux:
                 line_list.append('#!/bin/bash')
-            if (home_path/RvxMiniHome.read_only_tag).is_file():
-                line_list.append('git checkout .')
             line_list.append('git pull origin master')
             line_list.append('git submodule init')
             line_list.append('git submodule update --force')
@@ -215,6 +213,8 @@ if __name__ == '__main__':
             execute_shell_cmd('git checkout .', home_path)
 
         elif cmd == 'freeze':
+            mini_home = RvxMiniHome(devkit)
+            mini_home.download_synthesizer()
             config.freeze_tag_path.touch(exist_ok=True)
             config.path_config_path.unlink(missing_ok=True)
 
@@ -245,9 +245,6 @@ if __name__ == '__main__':
         elif cmd == 'synthesizer.uninstall':
             mini_home = RvxMiniHome(devkit)
             mini_home.uninstall_synthesizer()
-
-        elif cmd == 'read_only':
-            (home_path/RvxMiniHome.read_only_tag).touch()
 
         elif cmd == 'check':
             print('\n## git check ##')

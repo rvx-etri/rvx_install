@@ -24,7 +24,7 @@ from config_file_manager import *
 class RvxPathConfig(ConfigFileManager):
   def __init__(self, file_path:Path, home_path:Path, devkit_path:Path, is_mini:bool):
     super().__init__('rvx_path_config', file_path, None)
-    self.allowed_set = frozenset(('python3_cmd', 'home_path', 'devkit_path','utility_path','local_setup_path', 'windows_binary_path', 'env_path', 'gui_path', 'synthesizer_path', 'ocd_path'))
+    self.allowed_set = frozenset(('python3_cmd', 'home_path', 'devkit_path','utility_path','local_setup_path', 'windows_binary_path', 'env_path', 'gui_path', 'ocd_path'))
     if self.check(self.allowed_set, exact=True):
       assert self.get_attr('home_path')==home_path, (self.get_attr('home_path'),home_path)
       assert self.get_attr('devkit_path')==devkit_path, (self.get_attr('devkit_path'),devkit_path)
@@ -49,11 +49,9 @@ class RvxPathConfig(ConfigFileManager):
       if is_mini:
         self.set_attr('utility_path', home_path / 'rvx_util')
         self.set_attr('env_path', home_path / 'env')
-        self.set_attr('synthesizer_path', None)
       else:
         self.set_attr('utility_path', get_path_from_os_env('RVX_UTIL_HOME', must=True))
         self.set_attr('env_path', get_path_from_os_env('RVX_ENV', must=True))
-        self.set_attr('synthesizer_path', get_path_from_os_env('RVX_SYNTHESIZER_HOME'))
 
       if is_windows:
         self.set_attr('windows_binary_path', home_path / 'windows_binary')
@@ -85,11 +83,12 @@ class RvxPathConfig(ConfigFileManager):
 class RvxToolConfig(ConfigFileManager):
   def __init__(self, file_path:Path):
     super().__init__('rvx_tool_config', file_path, None)
-    self.allowed_set = frozenset(('rtl_simulator','use_terminal_for_implementing_fpga','use_terminal_for_running_ocd','use_terminal_for_connecting_ocd','use_terminal_for_printf', 'build_smart','build_local','minicom_as_file'))
+    self.allowed_set = frozenset(('rtl_simulator','use_terminal_for_implementing_fpga','use_terminal_for_running_ocd','use_terminal_for_connecting_ocd','use_terminal_for_printf', 'build_smart','build_local','syn_local','minicom_as_file'))
     if not self.check(self.allowed_set, exact=True):
       self.clear()
       assert self.check(self.allowed_set, exact=True)
     self.update_build_local()
+    self.update_syn_local()
 
   def update_build_local(self):
     # nullify if not exist
@@ -100,6 +99,15 @@ class RvxToolConfig(ConfigFileManager):
         exist = True
     if not exist:
       self.set_attr('build_local', False)
+  
+  def update_syn_local(self):
+    # nullify if not exist
+    exist = False
+    synthesizer_path = get_path_from_os_env('RVX_SYNTHESIZER_HOME')
+    if synthesizer_path and synthesizer_path.is_dir():
+      exist = True
+    if not exist:
+      self.set_attr('syn_local', False)
 
   def clear(self):
     super().clear()
@@ -114,8 +122,10 @@ class RvxToolConfig(ConfigFileManager):
     self.set_attr('use_terminal_for_printf', True)
     self.set_attr('build_smart', True)
     self.set_attr('build_local', True)
+    self.set_attr('syn_local', True)
     self.set_attr('minicom_as_file', False)
     self.update_build_local()
+    self.update_syn_local()
 
 class RvxSudoConfig(ConfigFileManager):
   def __init__(self, file_path:Path, key):
@@ -166,7 +176,7 @@ class RvxConfig():
   
   @property
   def freeze_tag_path(self):
-    return self.home_path / 'this_git_is_frozen'
+    return self.home_path / 'this_repo_is_frozen'
   
   @property
   def is_frozen(self):
@@ -279,6 +289,10 @@ class RvxConfig():
   @property
   def is_server(self):
     return self.server_mode_path.is_file()
+  
+  @property
+  def is_local(self): # my machine
+    return (not self.is_server)
     
   def __init__(self, home_path:Path=None):
     self.home_path = home_path.resolve()
@@ -301,6 +315,8 @@ class RvxConfig():
       self.key_manager.export_file()
     self.sudo_config = RvxSudoConfig(self.sudo_config_path, self.key)
     self.server_config = RvxServerConfig(self.server_config_path, self.key)
+    
+    assert not (self.is_frozen and is_windows), 'this frozen repo is NOT compatible with Windows.'
 
   def __getattr__(self, name:str):
     if name in self.__dict__.keys():

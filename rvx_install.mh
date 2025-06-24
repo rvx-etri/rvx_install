@@ -32,7 +32,7 @@ PYTHON_CMD_LIST = install gnome windows_binary ssh misc config \
 									clean distclean \
 									sync resync install_sync sync_version \
 									enable_debug disable_debug check_remote_log tool_config \
-									read_only after_update \
+									after_update \
 									example example.install example.uninstall\
 									compiler compiler.install compiler.uninstall\
 									synthesizer synthesizer.install synthesizer.uninstall\
