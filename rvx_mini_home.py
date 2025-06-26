@@ -129,6 +129,7 @@ class RvxMiniHome():
     success = self._install_compiler()
       
     if success:
+      self._install_sync()
       self.devkit.add_log(f'Compiler Success: Reopen the terminal', 'done')
     else:
       self.devkit.add_log(f'Compiler Fail: Sync Required', 'error')
@@ -259,6 +260,9 @@ class RvxMiniHome():
       self.devkit.get_remote_handler().request_ssh(f'touch ./{sync_history_filename}')
       
       self._install_sync()
+      self._update_compiler_if_exist()
+      self._update_example_if_exist()
+      self._update_synthesizer_if_exist()
       assert (self.home_path/'env').is_dir()
       
       if git_update_is_required:
@@ -272,14 +276,14 @@ class RvxMiniHome():
   def _install_sync(self):
     assert self.install_sync_path.is_file()
     execute_shell_cmd(f'{self.devkit.config.python3_cmd} {self.install_sync_path}', self.home_path)
-    self._update_compiler_if_exist()
-    self._update_example_if_exist()
-    self._update_synthesizer_if_exist()
   
   def install_sync(self):
     self.devkit.add_new_job('install_sync', True)
     if self.install_sync_path.is_file():
       self._install_sync()
+      self._update_compiler_if_exist()
+      self._update_example_if_exist()
+      self._update_synthesizer_if_exist()
       self.devkit.add_log(f'Install Sync Success', 'done')
     else:
       self.devkit.add_log(f'Install Sync Fail: No Sync File', 'done')

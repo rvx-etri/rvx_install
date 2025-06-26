@@ -5,5 +5,5 @@ It is suitable for applications such as microcontroller units (MCUs) and lightwe
 
 ## Install
 
-You can access the manual here:  
+You can access the installation manual here:
 [https://riscvexpress.github.io](https://riscvexpress.github.io)
