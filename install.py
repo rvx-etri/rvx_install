@@ -49,7 +49,7 @@ if __name__ == '__main__':
 
     if not args.cmd:
         assert 0
-    elif args.cmd == 'install':
+    elif args.cmd == 'prepare' or args.cmd == 'install':
         cmd_list = ('windows_binary', 'gnome', 'ssh', 'misc', 'config')
     else:
         cmd_list = [args.cmd]
@@ -64,7 +64,7 @@ if __name__ == '__main__':
     devkit = RvxDevkit(config, args.output, engine_log, False)
 
     for cmd in cmd_list:
-        if cmd == 'install':
+        if cmd == 'prepare' or cmd == 'install':
             assert 0, 'wrong command {0}'.format(args.cmd)
 
         elif cmd == 'windows_binary':
@@ -190,11 +190,11 @@ if __name__ == '__main__':
             mini_home = RvxMiniHome(devkit)
             mini_home.resync()
 
-        elif cmd == 'install_sync':
+        elif cmd == 'activate':
             mini_home = RvxMiniHome(devkit)
-            mini_home.install_sync()
+            mini_home.activate()
 
-        elif cmd == 'sync_version':
+        elif cmd == 'rvx_version':
             mini_home = RvxMiniHome(devkit)
             devkit.handle_output(mini_home.version)
 

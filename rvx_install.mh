@@ -28,9 +28,9 @@ include ./rvx_init.mh
 # install #
 ###########
 
-PYTHON_CMD_LIST = install gnome windows_binary ssh misc config \
+PYTHON_CMD_LIST = prepare gnome windows_binary ssh misc config \
 									clean distclean \
-									sync resync install_sync sync_version \
+									sync resync activate rvx_version \
 									enable_debug disable_debug check_remote_log tool_config \
 									after_update \
 									example example.install example.uninstall\
