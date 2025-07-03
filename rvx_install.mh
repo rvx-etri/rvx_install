@@ -17,7 +17,7 @@
 # ****************************************************************************
 
 ifdef RVX_MINI_HOME
-	include ./rvx_config.mh
+	include ${RVX_MINI_HOME}/rvx_config.mh
 endif
 
 include ./rvx_init.mh

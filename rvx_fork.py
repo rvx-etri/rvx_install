@@ -122,25 +122,26 @@ if __name__ == '__main__':
     run_shell_cmd('make update_mini_git', output_path)
 
     # rvx_special_ip
-    rvx_special_ip_name_list = []
-    special_ip_path_name = config.special_ip_path.name
-    run_shell_cmd(f'git checkout ./{special_ip_path_name}', output_path,
-                  prints_when_error=False, asserts_when_error=False)
-    if 'u' in option_list:
-        rvx_special_ip_name_list = [x.name for x in (
-            output_path / special_ip_path_name).glob('*') if x.is_dir()]
-    else:
-        rvx_special_ip_name_list = [x.name for x in (
-            input_path / special_ip_path_name).glob('*') if x.is_dir()]
+    if config.special_ip_path:
+      rvx_special_ip_name_list = []
+      special_ip_path_name = config.special_ip_path.name
+      run_shell_cmd(f'git checkout ./{special_ip_path_name}', output_path,
+                    prints_when_error=False, asserts_when_error=False)
+      if 'u' in option_list:
+          rvx_special_ip_name_list = [x.name for x in (
+              output_path / special_ip_path_name).glob('*') if x.is_dir()]
+      else:
+          rvx_special_ip_name_list = [x.name for x in (
+              input_path / special_ip_path_name).glob('*') if x.is_dir()]
 
-    if rvx_special_ip_name_list:
-        print(rvx_special_ip_name_list)
-        rvx_special_ip_path = output_path / special_ip_path_name
-        remove_directory(rvx_special_ip_path)
-        rvx_special_ip_path.mkdir()
-        for rvx_special_ip_name in rvx_special_ip_name_list:
-            copy_directory(config.special_ip_path/rvx_special_ip_name,
-                           rvx_special_ip_path/rvx_special_ip_name)
+      if rvx_special_ip_name_list:
+          print(rvx_special_ip_name_list)
+          rvx_special_ip_path = output_path / special_ip_path_name
+          remove_directory(rvx_special_ip_path)
+          rvx_special_ip_path.mkdir()
+          for rvx_special_ip_name in rvx_special_ip_name_list:
+              copy_directory(config.special_ip_path/rvx_special_ip_name,
+                            rvx_special_ip_path/rvx_special_ip_name)
 
     # copy
     copy_component_list = [

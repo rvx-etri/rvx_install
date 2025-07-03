@@ -224,7 +224,7 @@ if __name__ == '__main__':
             config.freeze_tag_path.touch(exist_ok=True)
             config.path_config_path.unlink(missing_ok=True)
             execute_shell_cmd(f'git add {config.freeze_tag_path}', home_path)
-            execute_shell_cmd(f'git add -rf {mini_home.sync_path}', home_path)
+            execute_shell_cmd(f'git add -f {mini_home.sync_path}', home_path)
 
         elif cmd == 'unfreeze':
             config.freeze_tag_path.unlink(missing_ok=True)
