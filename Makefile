@@ -35,12 +35,16 @@ setup_mini_git:
 			cp -f ./mini_git/imp_class_info/Makefile ${MINI_GIT}/imp_class_info/ ; \
 			cd ${MINI_GIT}/imp_class_info && make reimport ;\
 		else \
-			cp -r ./mini_git/imp_class_info/ ${MINI_GIT} ; \
+			make gen_link_for_imp_class_info ; \
 		fi ; \
 	fi
 
 gen_link_for_imp_class_info:
 	cd ${MINI_GIT} && rm -rf imp_class_info
 	cd ${MINI_GIT} && ln -s ./rvx_install/mini_git/imp_class_info imp_class_info
+
+copy_imp_class_info:
+	cd ${MINI_GIT} && rm -rf imp_class_info
+	cp -r ./mini_git/imp_class_info/ ${MINI_GIT}
 
 .PHONY: _check_etri_home

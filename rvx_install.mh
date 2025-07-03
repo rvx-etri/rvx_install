@@ -37,6 +37,7 @@ PYTHON_CMD_LIST = prepare gnome windows_binary ssh misc config \
 									compiler compiler.install compiler.uninstall\
 									synthesizer synthesizer.install synthesizer.uninstall\
 									freeze unfreeze git_add_result\
+									freeze_git\
 									check
 
 ${PYTHON_CMD_LIST}:%:
@@ -61,67 +62,9 @@ update_mini_git:
 # fork #
 ########
 
-HWLIB_SPECIAL_DIRNAME=rvx_special_ip
-HWLIB_SPECIAL_DIR=${CURDIR}/${HWLIB_SPECIAL_DIRNAME}
+FORK_CMD_LIST=fork fork.f fork.u fork.fu fork.uf
 
-TARGET_DIR_ABS = $(abspath ${TARGET})
+${FORK_CMD_LIST}:%:
+	@${PYTHON3_CMD} ./rvx_install/rvx_fork.py -cmd $(*) -i ${CURDIR} -o ${TARGET}
 
-FORK_SUBGIT_LIST = rvx_init rvx_install
-FORK_HWLIB_SPECIAL_IP_LIST=$(basename $(notdir $(wildcard ${HWLIB_SPECIAL_DIR}/*)))
-FORK_USER_DIR_LIST=$(filter-out .git local_setup manual env sync rvx_%, $(shell find . -mindepth 1 -maxdepth 1 -type d -exec basename {} \;))
-
-_check_target: _check_mini_home
-	$(if $(TARGET), , $(error TARGET is NOT defined))
-	@echo TARGET: ${TARGET_DIR_ABS}
-	@if [ "$(TARGET_DIR_ABS)" = "$(CURDIR)" ]; then \
-		echo "*Error: TARGET is same as the current directory"; \
-		exit 1; \
-	fi
-	@if ! [ -d ${TARGET_DIR_ABS} ] ;	\
-	then \
-		echo "*Error: TARGET is NOT a directory"; \
-		exit 1; \
-	fi
-	@if ! [ -d ${TARGET_DIR_ABS}/.git ] ;	\
-	then \
-		echo "*Error: TARGET is NOT a git repository"; \
-		exit 1; \
-	fi
-
-fork_rvx: _check_target $(addprefix fork_subgit., $(FORK_SUBGIT_LIST))
-	-@cd ${TARGET_DIR_ABS}/rvx_install && make --no-print-directory setup_mini_git
-
-$(addprefix fork_subgit., $(FORK_SUBGIT_LIST)):fork_subgit.%:
-	-@cd ${TARGET_DIR_ABS} && git submodule deinit -f $(*)
-	-@cd ${TARGET_DIR_ABS} && rm -rf .git/modules/$(*)
-	-@cd ${TARGET_DIR_ABS} && git rm -rf $(*)
-	@cd ${TARGET_DIR_ABS} && rm -rf $(*)
-	cd ${TARGET_DIR_ABS} && git submodule add -f ${CURDIR}/$(*)
-	cd ${TARGET_DIR_ABS} && git config -f .gitmodules submodule.$(*).url "https://bitbucket.org/kyuseung_han/$(*).git"
-	cd ${TARGET_DIR_ABS}/$(*) && git pull origin master
-
-fork: fork_rvx fork_hwlib_special $(addprefix fork_user_dir., $(FORK_USER_DIR_LIST))
-
-fork_hwlib_special:
-	@echo ${FORK_HWLIB_SPECIAL_IP_LIST}
-	-@cd ${TARGET_DIR_ABS} && git checkout ./${HWLIB_SPECIAL_DIRNAME}
-	@cd ${TARGET_DIR_ABS} && mkdir -p ${HWLIB_SPECIAL_DIRNAME}
-	@for ip_name in ${FORK_HWLIB_SPECIAL_IP_LIST}; do	\
-		cd ${TARGET_DIR_ABS}/${HWLIB_SPECIAL_DIRNAME} && rm -rf ./$$ip_name; \
-		cp -r ${HWLIB_SPECIAL_DIR}/$$ip_name ${TARGET_DIR_ABS}/${HWLIB_SPECIAL_DIRNAME}/; \
-	done
-
-$(addprefix fork_user_dir., $(FORK_USER_DIR_LIST)):fork_user_dir.%:
-	-@cd ${TARGET_DIR_ABS} && git rm -rf $(*)
-	@cd ${TARGET_DIR_ABS} && rm -rf $(*)
-	cd ${TARGET_DIR_ABS} && cp -r ${CURDIR}/$(*) .
-
-##########
-# export #
-##########
-
-export: fork
-	@cd ${TARGET_DIR_ABS} && rm -rf sync
-	@cd ${TARGET_DIR_ABS} && cp -rf ${CURDIR}/sync .
-
-.PHONY: ${PYTHON_CMD_LIST} _check_linux _check_mini_home _check_target compiler
+.PHONY: ${PYTHON_CMD_LIST} _check_linux _check_mini_home
