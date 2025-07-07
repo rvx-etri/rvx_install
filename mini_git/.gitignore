@@ -20,3 +20,5 @@ rvx_platform_example
 rvx_synthesizer*
 install_second
 manual
+
+!sync/rvx_*.tar.gz
