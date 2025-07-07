@@ -81,16 +81,16 @@ class RvxPathConfig(ConfigFileManager):
     '''    
 
 class RvxToolConfig(ConfigFileManager):
-  def __init__(self, file_path:Path):
+  def __init__(self, file_path:Path, is_frozen:bool):
     super().__init__('rvx_tool_config', file_path, None)
     self.allowed_set = frozenset(('rtl_simulator','use_terminal_for_implementing_fpga','use_terminal_for_running_ocd','use_terminal_for_connecting_ocd','use_terminal_for_printf', 'build_smart','build_local','syn_local','minicom_as_file'))
     if not self.check(self.allowed_set, exact=True):
       self.clear()
       assert self.check(self.allowed_set, exact=True)
-    self.update_build_local()
-    self.update_syn_local()
+    self.update_build_local(is_frozen)
+    self.update_syn_local(is_frozen)
 
-  def update_build_local(self):
+  def update_build_local(self, is_frozen:bool):
     # nullify if not exist
     exist = False
     binary_path = get_path_from_os_env('RVX_BINARY_HOME')
@@ -99,8 +99,10 @@ class RvxToolConfig(ConfigFileManager):
         exist = True
     if not exist:
       self.set_attr('build_local', False)
+    elif is_frozen:
+      self.set_attr('build_local', True)
   
-  def update_syn_local(self):
+  def update_syn_local(self, is_frozen:bool):
     # nullify if not exist
     exist = False
     synthesizer_path = get_path_from_os_env('RVX_SYNTHESIZER_HOME')
@@ -108,6 +110,8 @@ class RvxToolConfig(ConfigFileManager):
       exist = True
     if not exist:
       self.set_attr('syn_local', False)
+    elif is_frozen:
+      self.set_attr('syn_local', True)
 
   def clear(self):
     super().clear()
@@ -124,8 +128,6 @@ class RvxToolConfig(ConfigFileManager):
     self.set_attr('build_local', True)
     self.set_attr('syn_local', True)
     self.set_attr('minicom_as_file', False)
-    self.update_build_local()
-    self.update_syn_local()
 
 class RvxSudoConfig(ConfigFileManager):
   def __init__(self, file_path:Path, key):
@@ -308,15 +310,13 @@ class RvxConfig():
       assert self.home_path==self.devkit_path, (self.home_path, self.devkit_path)
 
     self.path_config = RvxPathConfig(self.path_config_path, self.home_path, self.devkit_path, self.is_mini)
-    self.tool_config = RvxToolConfig(self.tool_config_path)
+    self.tool_config = RvxToolConfig(self.tool_config_path, self.is_frozen)
     self.key_manager = KeyFileManager(self.key_path)
     if not self.key_manager.key:
       self.key_manager.generate_key()
       self.key_manager.export_file()
     self.sudo_config = RvxSudoConfig(self.sudo_config_path, self.key)
     self.server_config = RvxServerConfig(self.server_config_path, self.key)
-    
-    assert not (self.is_frozen and is_windows), 'this frozen repo is NOT compatible with Windows.'
 
   def __getattr__(self, name:str):
     if name in self.__dict__.keys():

@@ -121,7 +121,11 @@ class RvxMiniHome():
         extract_file(self.sync_path/f'{tar_name}.tar.gz')
         move_directory(extracted_path, target_path)
   
+  def _check_not_windows(self):
+    assert not is_windows, 'RVX-free is NOT compatible with Windows.'
+  
   def _install_compiler(self):
+    self._check_not_windows()
     rvx_binary_url = self.local_sync_config_dict.get('rvx_binary.url')
     git_version = self.local_sync_config_dict.get('rvx_binary.commit')
     has_rvx_util = self.devkit.config.utility_path.is_dir()
@@ -198,6 +202,7 @@ class RvxMiniHome():
       self.devkit.get_remote_handler().request_sftp_get(remote_synthesizer_filename, '.', self.sync_path)
   
   def _install_synthesizer(self):
+    self._check_not_windows()
     assert self.sync_path.is_dir()
     install_new = True
     if self.synthesizer_sync_info_path.is_file():
@@ -290,6 +295,8 @@ class RvxMiniHome():
     remote_info_file.unlink()
   
   def _activate(self):
+    if self.is_frozen:
+      self._check_not_windows()
     assert self.activate_path.is_file(), self.activate_path
     execute_shell_cmd(f'{self.devkit.config.python3_cmd} {self.activate_path}', self.home_path)
     self.update_sync_gitignore()
