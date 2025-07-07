@@ -16,7 +16,7 @@
 # ****************************************************************************
 # ****************************************************************************
 
-export RVX_ENV=${RVX_MINI_HOME}/env
+export RVX_ENV=${RVX_MINI_HOME}/rvx_devkit/env
 export RVX_UTIL_HOME=${RVX_MINI_HOME}/rvx_util
 export RVX_HWLIB_HOME=${RVX_MINI_HOME}/rvx_hwlib
 export MUNOC_HW_HOME=${RVX_HWLIB_HOME}/munoc

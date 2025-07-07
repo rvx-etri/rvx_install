@@ -214,21 +214,17 @@ if __name__ == '__main__':
 
         elif cmd == 'freeze':
             mini_home = RvxMiniHome(devkit)
-            mini_home.download_synthesizer()
-            config.freeze_tag_path.touch(exist_ok=True)
-            config.path_config_path.unlink(missing_ok=True)
+            mini_home.freeze()
         
         elif cmd == 'freeze_git':
             mini_home = RvxMiniHome(devkit)
-            mini_home.download_synthesizer()
-            config.freeze_tag_path.touch(exist_ok=True)
-            config.path_config_path.unlink(missing_ok=True)
+            mini_home.freeze()
             execute_shell_cmd(f'git add {config.freeze_tag_path}', home_path)
             execute_shell_cmd(f'git add -f {mini_home.sync_path}', home_path)
 
         elif cmd == 'unfreeze':
-            config.freeze_tag_path.unlink(missing_ok=True)
-            config.path_config_path.unlink(missing_ok=True)
+            mini_home = RvxMiniHome(devkit)
+            mini_home.unfreeze()
 
         elif cmd == 'example' or cmd == 'example.install':
             mini_home = RvxMiniHome(devkit)

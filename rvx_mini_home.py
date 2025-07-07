@@ -80,8 +80,12 @@ class RvxMiniHome():
     return self.home_path / 'sync'
   
   @property
-  def install_sync_path(self):
-    return self.sync_path / 'install_sync.py'
+  def sync_gitignore_path(self):
+    return self.home_path / 'sync' / '.gitignore'
+  
+  @property
+  def activate_path(self):
+    return self.sync_path / 'activate.py'
   
   @property
   def tool_config_path(self):
@@ -263,7 +267,6 @@ class RvxMiniHome():
       self._update_compiler_if_exist()
       self._update_example_if_exist()
       self._update_synthesizer_if_exist()
-      assert (self.home_path/'env').is_dir()
       
       if git_update_is_required:
         self.devkit.add_log(f'Sync Warning: Please Update ./rvx_install (checkout to {required_rvx_install_version})', 'done')
@@ -274,12 +277,13 @@ class RvxMiniHome():
     remote_info_file.unlink()
   
   def _activate(self):
-    assert self.install_sync_path.is_file()
-    execute_shell_cmd(f'{self.devkit.config.python3_cmd} {self.install_sync_path}', self.home_path)
+    assert self.activate_path.is_file(), self.activate_path
+    execute_shell_cmd(f'{self.devkit.config.python3_cmd} {self.activate_path}', self.home_path)
+    self.update_sync_gitignore()
   
   def activate(self):
     self.devkit.add_new_job('activate', True)
-    if self.install_sync_path.is_file():
+    if self.activate_path.is_file():
       self._activate()
       self._update_compiler_if_exist()
       self._update_example_if_exist()
@@ -293,6 +297,25 @@ class RvxMiniHome():
       remove_directory(self.sync_path)
       run_shell_cmd(self.devkit.get_remote_handler().make_ssh_cmd('setup_rvx_private_force'))
     self.sync()
+    self.devkit.engine_log.current_job.name = 'resync'
+    
+  def update_sync_gitignore(self):
+    if self.is_frozen:
+      self.sync_gitignore_path.unlink(missing_ok=True)
+    else:
+      self.sync_gitignore_path.touch()
+      self.sync_gitignore_path.write_text('*')
+  
+  def freeze(self):
+    self.download_synthesizer()
+    self.devkit.config.freeze_tag_path.touch(exist_ok=True)
+    self.devkit.config.path_config_path.unlink(missing_ok=True)
+    self.update_sync_gitignore()
+  
+  def unfreeze(self):
+    self.devkit.config.freeze_tag_path.unlink(missing_ok=True)
+    self.devkit.config.path_config_path.unlink(missing_ok=True)
+    self.update_sync_gitignore()
 
   def clean(self):  
     preserved_file_list = frozenset(('.git','.gitignore','.gitmodules','Makefile','README.md','rvx_setup.sh','rvx_each.mh','rvx_init.mh','rvx_config.mh', 'rvx_python_config.mh','debug', self.devkit.config.freeze_tag_path.name,'python3.bat','imp_class_info'))

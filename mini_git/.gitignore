@@ -11,11 +11,11 @@ rvx_*.log
 rvx_python_config.mh
 python3.bat
 
-sync
 rvx_util
 rvx_hwlib
 rvx_ssw
 rvx_binary*
+rvx_devkit*
 rvx_platform_example
 rvx_synthesizer*
 install_second

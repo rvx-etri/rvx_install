@@ -48,7 +48,7 @@ class RvxPathConfig(ConfigFileManager):
 
       if is_mini:
         self.set_attr('utility_path', home_path / 'rvx_util')
-        self.set_attr('env_path', home_path / 'env')
+        self.set_attr('env_path', home_path / 'rvx_devkit' / 'env')
       else:
         self.set_attr('utility_path', get_path_from_os_env('RVX_UTIL_HOME', must=True))
         self.set_attr('env_path', get_path_from_os_env('RVX_ENV', must=True))

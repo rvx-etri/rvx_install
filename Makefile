@@ -30,7 +30,9 @@ setup_mini_git:
 	cd ./mini_git && cp -f ${MINI_GIT_FILE_LIST} ${MINI_GIT}/
 	cd ${MINI_GIT} && mkdir -p ./platform
 	cp -rf ./mini_git/platform/* ${MINI_GIT}/platform
-	if ! [ -L ${MINI_GIT}/imp_class_info ] ;	then \
+	if [ -L ${MINI_GIT}/imp_class_info ] ;	then \
+		make gen_link_for_imp_class_info ; \
+	else \
 		if [ -d ${MINI_GIT}/imp_class_info ] ;	then \
 			cp -f ./mini_git/imp_class_info/Makefile ${MINI_GIT}/imp_class_info/ ; \
 			cd ${MINI_GIT}/imp_class_info && make reimport ;\
