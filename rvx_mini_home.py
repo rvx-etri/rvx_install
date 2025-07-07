@@ -110,11 +110,23 @@ class RvxMiniHome():
   def is_frozen(self):
     return self.devkit.config.is_frozen
   
+  def _preactivate(self):
+    if self.activate_path.is_file():
+      tar_list = ('rvx_util',)
+      for tar_name in tar_list:
+        extracted_path = self.sync_path/tar_name
+        target_path = self.home_path/tar_name
+        remove_directory(extracted_path)
+        remove_directory(target_path)
+        extract_file(self.sync_path/f'{tar_name}.tar.gz')
+        move_directory(extracted_path, target_path)
+  
   def _install_compiler(self):
     rvx_binary_url = self.local_sync_config_dict.get('rvx_binary.url')
     git_version = self.local_sync_config_dict.get('rvx_binary.commit')
-    success = False
-    if rvx_binary_url and git_version:
+    has_rvx_util = self.devkit.config.utility_path.is_dir()
+    success = rvx_binary_url and git_version and has_rvx_util
+    if success:
       if self.binary_path.is_dir():
         if get_git_url(self.binary_path)!=rvx_binary_url:
           remove_directory(self.binary_path)
@@ -125,10 +137,10 @@ class RvxMiniHome():
       run_shell_cmd(f'make --no-print-directory config', self.binary_path)
       run_shell_cmd(f'make --no-print-directory compiler', self.binary_path)
       self.tool_config_path.unlink(missing_ok=True)
-      success = True
     return success
   
   def install_compiler(self):
+    self._preactivate()
     self.devkit.add_new_job('compiler.install', True)
     success = self._install_compiler()
       
@@ -136,7 +148,7 @@ class RvxMiniHome():
       self._activate()
       self.devkit.add_log(f'Compiler Success: Reopen the terminal', 'done')
     else:
-      self.devkit.add_log(f'Compiler Fail: Sync Required', 'error')
+      self.devkit.add_log(f'Compiler Fail: Activation Required', 'error')
   
   def uninstall_compiler(self):
     self.devkit.add_new_job('compiler.uninstall', True)
@@ -144,8 +156,8 @@ class RvxMiniHome():
     self.tool_config_path.unlink(missing_ok=True)
     self.devkit.add_log(f'Compiler Uninstall Success: Reopen the terminal', 'done')
   
-  def _update_compiler_if_exist(self):
-    if self.binary_path.is_dir():
+  def _update_compiler_if_needed(self):
+    if self.is_frozen or self.binary_path.is_dir():
       self._install_compiler()
   
   def _install_example(self):
@@ -219,8 +231,8 @@ class RvxMiniHome():
     self.tool_config_path.unlink(missing_ok=True)
     self.devkit.add_log(f'Synthesizer Uninstall Success', 'done')
 
-  def _update_synthesizer_if_exist(self):
-    if self.synthesizer_path.is_dir():
+  def _update_synthesizer_if_needed(self):
+    if self.is_frozen or self.synthesizer_path.is_dir():
       self._install_synthesizer()
 
   def sync(self):
@@ -263,10 +275,11 @@ class RvxMiniHome():
       self.local_sync_config.export_file(self.devkit.get_sync_info_path)
       self.devkit.get_remote_handler().request_ssh(f'touch ./{sync_history_filename}')
       
+      self._preactivate()
+      self._update_compiler_if_needed()
+      self._update_synthesizer_if_needed()
       self._activate()
-      self._update_compiler_if_exist()
       self._update_example_if_exist()
-      self._update_synthesizer_if_exist()
       
       if git_update_is_required:
         self.devkit.add_log(f'Sync Warning: Please Update ./rvx_install (checkout to {required_rvx_install_version})', 'done')
@@ -284,10 +297,11 @@ class RvxMiniHome():
   def activate(self):
     self.devkit.add_new_job('activate', True)
     if self.activate_path.is_file():
+      self._preactivate()
+      self._update_compiler_if_needed()
+      self._update_synthesizer_if_needed()
       self._activate()
-      self._update_compiler_if_exist()
       self._update_example_if_exist()
-      self._update_synthesizer_if_exist()
       self.devkit.add_log(f'Activate Success', 'done')
     else:
       self.devkit.add_log(f'Activate Fail: No Sync File', 'done')
