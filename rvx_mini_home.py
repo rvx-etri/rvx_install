@@ -309,7 +309,7 @@ class RvxMiniHome():
       self._update_synthesizer_if_needed()
       self._activate()
       self._update_example_if_exist()
-      self.devkit.add_log(f'Activate Success', 'done')
+      self.devkit.add_log(f'Activate Success: Reopen the terminal', 'done')
     else:
       self.devkit.add_log(f'Activate Fail: No Sync File', 'done')
 

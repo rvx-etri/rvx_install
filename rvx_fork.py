@@ -91,17 +91,17 @@ if __name__ == '__main__':
         add_as_submodule = True
         if 'f' in option_list:
             add_as_submodule = False
-        elif not (input_path/rvx_submodule/'.git').is_dir():
+        elif not (input_path/rvx_submodule/'.git').is_file():
             add_as_submodule = False
 
         if add_as_submodule:
-            copy_directory(input_path/rvx_submodule, output_path/rvx_submodule)
-            remove_directory(output_path/rvx_submodule/'.git')
-        else:
             run_shell_cmd(
                 f'git submodule add -f {input_path / rvx_submodule}', output_path)
             run_shell_cmd(
                 f'git config -f .gitmodules submodule.{rvx_submodule}.url \"https://bitbucket.org/kyuseung_han/{rvx_submodule}.git\"', output_path)
+        else:
+            copy_directory(input_path/rvx_submodule, output_path/rvx_submodule)
+            remove_file(output_path/rvx_submodule/'.git')
 
     # imp_class_info
     imp_class_info_path = output_path / 'imp_class_info'
