@@ -98,7 +98,7 @@ if __name__ == '__main__':
             run_shell_cmd(
                 f'git submodule add -f {input_path / rvx_submodule}', output_path)
             run_shell_cmd(
-                f'git config -f .gitmodules submodule.{rvx_submodule}.url \"https://bitbucket.org/kyuseung_han/{rvx_submodule}.git\"', output_path)
+                f'make rvx_init CMD={rvx_submodule}.github', output_path)
         else:
             copy_directory(input_path/rvx_submodule, output_path/rvx_submodule)
             remove_file(output_path/rvx_submodule/'.git')

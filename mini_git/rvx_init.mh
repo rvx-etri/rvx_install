@@ -131,7 +131,14 @@ rvx_init_git:
 	-rm -rf .git/modules/rvx_init
 	-git rm -rf ./rvx_init
 	-rm -rf ./rvx_init
-	git submodule add -f https://bitbucket.org/kyuseung_han/rvx_init.git
+	git clone https://github.com/rvx-etri/rvx_init.git
+
+rvx_init_subgit:
+	-git submodule deinit -f rvx_init
+	-rm -rf .git/modules/rvx_init
+	-git rm -rf ./rvx_init
+	-rm -rf ./rvx_init
+	git submodule add -f https://github.com/rvx-etri/rvx_init.git
 
 update_rvx_init:
 	@if [ -f ${RVX_INIT_HOME}/rvx_init.mh ] ;	\
