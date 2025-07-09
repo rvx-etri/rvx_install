@@ -250,6 +250,10 @@ if __name__ == '__main__':
             mini_home = RvxMiniHome(devkit)
             mini_home.uninstall_synthesizer()
 
+        elif cmd == 'synthesizer.download':
+            mini_home = RvxMiniHome(devkit)
+            mini_home.download_synthesizer()
+
         elif cmd == 'check':
             print('\n## git check ##')
             execute_shell_cmd('git --version', home_path)

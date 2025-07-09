@@ -33,11 +33,11 @@ PYTHON_CMD_LIST = prepare gnome windows_binary ssh misc config \
 									sync resync activate rvx_version \
 									enable_debug disable_debug check_remote_log tool_config \
 									after_update \
-									example example.install example.uninstall\
-									compiler compiler.install compiler.uninstall\
-									synthesizer synthesizer.install synthesizer.uninstall\
-									freeze unfreeze git_add_result\
-									freeze_git\
+									example example.install example.uninstall \
+									compiler compiler.install compiler.uninstall \
+									synthesizer synthesizer.install synthesizer.uninstall synthesizer.download \
+									freeze unfreeze git_add_result \
+									freeze_git \
 									check
 
 ${PYTHON_CMD_LIST}:%:
@@ -64,7 +64,7 @@ update_mini_git:
 
 FORK_CMD_LIST=fork fork.f fork.u fork.fu fork.uf
 
-${FORK_CMD_LIST}:%:
+${FORK_CMD_LIST}:%: synthesizer.download
 	@${PYTHON3_CMD} ./rvx_install/rvx_fork.py -cmd $(*) -i ${CURDIR} -o ${TARGET}
 
 .PHONY: ${PYTHON_CMD_LIST} _check_linux _check_mini_home

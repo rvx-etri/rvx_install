@@ -18,7 +18,14 @@ def is_subpath(input_path, output_path):
         return True
     except ValueError:
         return False
-
+    
+def has_submodule(path:Path):
+    has = False
+    gitmodules_path = path / '.gitmodules'
+    if gitmodules_path.is_file():
+        if 'submodule' in gitmodules_path.read_text():
+            has = True
+    return has
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='RVX Fork Util')
@@ -85,7 +92,8 @@ if __name__ == '__main__':
                       prints_when_error=False, asserts_when_error=False)
 
     # rvx_submodule
-    (output_path/'.gitmodules').touch()
+    gitmodules_path = output_path / '.gitmodules'
+    gitmodules_path.touch()
     for rvx_submodule in rvx_submodule_list:
         assert rvx_submodule
         add_as_submodule = True
@@ -102,6 +110,9 @@ if __name__ == '__main__':
         else:
             copy_directory(input_path/rvx_submodule, output_path/rvx_submodule)
             remove_file(output_path/rvx_submodule/'.git')
+    
+    if not has_submodule(output_path):
+        gitmodules_path.unlink(missing_ok=True)
 
     # imp_class_info
     imp_class_info_path = output_path / 'imp_class_info'
@@ -115,8 +126,8 @@ if __name__ == '__main__':
     run_shell_cmd(f'git checkout ./imp_class_info', output_path,
                   prints_when_error=False, asserts_when_error=False)
 
-    if 'f' in option_list:
-        run_shell_cmd('make copy_imp_class_info', output_path / 'rvx_install')
+    #if 'f' in option_list:
+    #    run_shell_cmd('make copy_imp_class_info', output_path / 'rvx_install')
 
     # update_mini_git
     run_shell_cmd('make update_mini_git', output_path)
