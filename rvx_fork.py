@@ -18,14 +18,23 @@ def is_subpath(input_path, output_path):
         return True
     except ValueError:
         return False
-    
-def has_submodule(path:Path):
+
+
+def has_submodule(path: Path):
     has = False
     gitmodules_path = path / '.gitmodules'
     if gitmodules_path.is_file():
         if 'submodule' in gitmodules_path.read_text():
             has = True
     return has
+
+## from generate_git_info
+def get_git_url(path: Path):
+    assert path.is_dir(), path
+    result = subprocess.run('git config --get remote.origin.url', cwd=path,
+                            shell=True, stdout=subprocess.PIPE, encoding=encoding).stdout
+    return result[:-1]
+
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='RVX Fork Util')
@@ -106,11 +115,12 @@ if __name__ == '__main__':
             run_shell_cmd(
                 f'git submodule add -f {input_path / rvx_submodule}', output_path)
             url = f'https://github.com/rvx-etri/{rvx_submodule}.git'
-            run_shell_cmd(f'git config -f .gitmodules submodule.{rvx_submodule}.url \"{url}\"',output_path)
+            run_shell_cmd(
+                f'git config -f .gitmodules submodule.{rvx_submodule}.url \"{url}\"', output_path)
         else:
             copy_directory(input_path/rvx_submodule, output_path/rvx_submodule)
             remove_file(output_path/rvx_submodule/'.git')
-    
+
     if not has_submodule(output_path):
         gitmodules_path.unlink(missing_ok=True)
 
@@ -126,7 +136,7 @@ if __name__ == '__main__':
     run_shell_cmd(f'git checkout ./imp_class_info', output_path,
                   prints_when_error=False, asserts_when_error=False)
 
-    #if 'f' in option_list:
+    # if 'f' in option_list:
     #    run_shell_cmd('make copy_imp_class_info', output_path / 'rvx_install')
 
     # update_mini_git
@@ -166,3 +176,11 @@ if __name__ == '__main__':
             copy_file(input_component, output_component)
         elif input_component.is_dir():
             copy_directory(input_component, output_component)
+
+    # update client_info
+    new_client_sync_config_path = output_path / \
+        devkit.client_sync_config_path.relative_to(input_path)
+    run_shell_cmd(
+        f'{config.python3_cmd} {config.utility_path}/manage_version_info.py -name synced_before -value false -o {new_client_sync_config_path}', input_path)
+    run_shell_cmd(
+        f'{config.python3_cmd} {config.utility_path}/manage_version_info.py -name synced_from -value {get_git_url(input_path)} -o {new_client_sync_config_path}', input_path)

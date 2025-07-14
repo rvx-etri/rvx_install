@@ -24,9 +24,12 @@ GIT_REMOTE_URL=git@bitbucket.org:kyuseung_han/rvx_install.git
 -include ${RVX_ENV}/dev/rvx_dev_util.mh
 
 MINI_GIT=$(abspath ${CURDIR}/..)
-MINI_GIT_FILE_LIST = Makefile .gitignore rvx_init.mh rvx_config.mh README.md
+MINI_GIT_FILE_LIST = Makefile rvx_init.mh rvx_config.mh
 
-setup_mini_git:
+setup_mini_git: update_mini_git
+	cd ./mini_git && cp -f .gitignore README.md ${MINI_GIT}/
+	
+update_mini_git:
 	cd ./mini_git && cp -f ${MINI_GIT_FILE_LIST} ${MINI_GIT}/
 	cd ${MINI_GIT} && mkdir -p ./platform
 	cp -rf ./mini_git/platform/* ${MINI_GIT}/platform

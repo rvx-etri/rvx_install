@@ -58,12 +58,12 @@ class RvxDevkit():
     return self.get_env_path('info','rvx_imp_class_common.xml')
 
   @property
-  def get_sync_info_path(self):
+  def client_sync_config_path(self):
     return self.config.home_path / 'sync' / 'client_info.xml'
 
   def get_client_sync_config(self):
-    if self.get_sync_info_path.is_file():
-      client_sync_config = generate_config_from_version_info(self.get_sync_info_path)
+    if self.client_sync_config_path.is_file():
+      client_sync_config = generate_config_from_version_info(self.client_sync_config_path)
     else:
       client_sync_config = None
     return client_sync_config

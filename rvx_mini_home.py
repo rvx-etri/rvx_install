@@ -73,7 +73,7 @@ class RvxMiniHome():
   
   @property
   def synthesizer_sync_info_path(self):
-    return self.synthesizer_path / self.devkit.get_sync_info_path.name
+    return self.synthesizer_path / self.devkit.client_sync_config_path.name
 
   @property
   def sync_path(self):
@@ -207,7 +207,7 @@ class RvxMiniHome():
     install_new = True
     if self.synthesizer_sync_info_path.is_file():
       synthesizer_sync_config = generate_config_from_version_info(self.synthesizer_sync_info_path)
-      if self.local_sync_config_dict.get('rvx_synthesizer_obfuscated.commit')==synthesizer_sync_config.get_attr('rvx_synthesizer_obfuscated.commit'):
+      if self.local_sync_config_dict.get('rvx_synthesizer_obfuscated.commit')==synthesizer_sync_config.get_attr('rvx_synthesizer_obfuscated.commit') and self.local_sync_config_dict.get('rvx_library')==synthesizer_sync_config.get_attr('rvx_library'):
         install_new = False
     if install_new:
       remove_directory(self.synthesizer_path)
@@ -241,6 +241,14 @@ class RvxMiniHome():
       self._install_synthesizer()
 
   def sync(self):
+    is_frozen = self.is_frozen
+    if is_frozen:
+      self.unfreeze()
+    self._sync()
+    if is_frozen:
+      self.freeze()
+  
+  def _sync(self):
     assert not self.is_frozen, 'Sync is NOT possible in this frozen repo'
     is_install_complete = True
     mini_home = os.environ.get('RVX_MINI_HOME')
@@ -277,7 +285,8 @@ class RvxMiniHome():
       self.devkit.get_remote_handler().extract_tar_file(remote_sync_filename, '.', self.home_path)
       self.local_sync_config = remote_sync_config
       self.local_sync_config_dict['synced_before'] = 'true'
-      self.local_sync_config.export_file(self.devkit.get_sync_info_path)
+      #self.local_sync_config_dict['synced_from'] = self.devkit.config.ip_address
+      self.local_sync_config.export_file(self.devkit.client_sync_config_path)
       self.devkit.get_remote_handler().request_ssh(f'touch ./{sync_history_filename}')
       
       self._preactivate()

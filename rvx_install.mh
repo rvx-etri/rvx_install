@@ -55,8 +55,11 @@ gui:
 platform_gui:
 	@cd ./platform && make gui
 
-update_mini_git:
+setup_mini_git:
 	@cd ./rvx_install && make setup_mini_git
+
+update_mini_git:
+	@cd ./rvx_install && make update_mini_git
 
 ########
 # fork #
