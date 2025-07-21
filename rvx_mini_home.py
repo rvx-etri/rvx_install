@@ -325,7 +325,7 @@ class RvxMiniHome():
   def resync(self):
     if not self.is_frozen:
       remove_directory(self.sync_path)
-      run_shell_cmd(self.devkit.get_remote_handler().make_ssh_cmd('setup_rvx_private_force'))
+    run_shell_cmd(self.devkit.get_remote_handler().make_ssh_cmd('setup_rvx_private_force'))
     self.sync()
     self.devkit.engine_log.current_job.name = 'resync'
     
@@ -333,7 +333,7 @@ class RvxMiniHome():
     if self.is_frozen:
       self.sync_gitignore_path.unlink(missing_ok=True)
     else:
-      self.sync_gitignore_path.touch()
+      self.sync_gitignore_path.parent.mkdir(exist_ok=True)
       self.sync_gitignore_path.write_text('*')
   
   def freeze(self):
