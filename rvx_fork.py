@@ -28,7 +28,9 @@ def has_submodule(path: Path):
             has = True
     return has
 
-## from generate_git_info
+# from generate_git_info
+
+
 def get_git_url(path: Path):
     assert path.is_dir(), path
     result = subprocess.run('git config --get remote.origin.url', cwd=path,
@@ -82,9 +84,8 @@ if __name__ == '__main__':
     # init
     print(f'\"{input_path}\" is forked to \"{output_path}\"')
 
-    for rvx_init_module in ('Makefile', 'rvx_init.mh'):
-        copy_file(input_path/'rvx_install'/'mini_git' /
-                  rvx_init_module, output_path)
+    for rvx_init_module in ('Makefile', 'rvx_init.mh', 'README.md'):
+        copy_file(input_path/rvx_init_module, output_path)
 
     # rvx_submodule
     rvx_submodule_list = ('rvx_init', 'rvx_install')
