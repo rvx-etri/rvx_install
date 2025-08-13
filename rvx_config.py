@@ -115,7 +115,7 @@ class RvxToolConfig(ConfigFileManager):
 
   def clear(self):
     super().clear()
-    self.set_attr('rtl_simulator', 'modelsim')
+    self.set_attr('rtl_simulator', 'questasim')
     if run_shell_cmd('xmsim -version', self.file_path.parent, prints_when_error=False, asserts_when_error=False).returncode==0:
       self.set_attr('rtl_simulator', 'xcelium')
     elif run_shell_cmd('ncsim -version', self.file_path.parent, prints_when_error=False, asserts_when_error=False).returncode==0:
