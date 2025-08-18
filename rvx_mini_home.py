@@ -238,18 +238,10 @@ class RvxMiniHome():
 
   def _update_synthesizer_if_needed(self):
     if self.is_frozen or self.synthesizer_path.is_dir():
+      self.download_synthesizer()
       self._install_synthesizer()
-
-  def sync(self):
-    is_frozen = self.is_frozen
-    if is_frozen:
-      self.unfreeze()
-    self._sync()
-    if is_frozen:
-      self.freeze()
   
-  def _sync(self):
-    assert not self.is_frozen, 'Sync is NOT possible in this frozen repo'
+  def sync(self):
     is_install_complete = True
     mini_home = os.environ.get('RVX_MINI_HOME')
     if not mini_home:
