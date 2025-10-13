@@ -262,7 +262,7 @@ if __name__ == '__main__':
             print('\n## python check ##')
             execute_shell_cmd('make check_python', home_path)
             print('\n## python package check ##')
-            package_list = ('distro', 'numpy', 'cryptography',
+            package_list = ('distro', 'cryptography',
                             'pyelftools', 'configparser')
             for package in package_list:
                 result = run_shell_cmd(

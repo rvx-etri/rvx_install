@@ -18,7 +18,7 @@
         "COMBINED_INTERFACE": [ { "value": "0", "resolve_type": "generated", "format": "long", "usage": "all" } ],
         "REFCLK_TYPE": [ { "value": "NONE", "resolve_type": "generated", "usage": "all" } ],
         "MEM_TYPE": [ { "value": "DDR3", "resolve_type": "generated", "usage": "all" } ],
-        "TEMP_MON_CONTROL": [ { "value": "INTERNAL", "resolve_type": "generated", "usage": "all" } ],
+        "TEMP_MON_CONTROL": [ { "value": "EXTERNAL", "resolve_type": "generated", "usage": "all" } ],
         "POLARITY": [ { "value": "ACTIVE_LOW", "resolve_type": "generated", "usage": "all" } ],
         "IS_CLK_SHARED": [ { "value": "FALSE", "resolve_type": "generated", "usage": "all" } ],
         "SYSCLK_TYPE": [ { "value": "NOBUF", "resolve_type": "generated", "usage": "all" } ],

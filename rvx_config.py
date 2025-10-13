@@ -97,10 +97,11 @@ class RvxToolConfig(ConfigFileManager):
     if binary_path:
       if (binary_path / 'rvx_setup.sh').is_file():
         exist = True
-    if not exist:
-      self.set_attr('build_local', False)
-    elif is_frozen:
+    if is_frozen:
       self.set_attr('build_local', True)
+    elif not exist:
+      self.set_attr('build_local', False)
+    
   
   def update_syn_local(self, is_frozen:bool):
     # nullify if not exist
@@ -108,10 +109,10 @@ class RvxToolConfig(ConfigFileManager):
     synthesizer_path = get_path_from_os_env('RVX_SYNTHESIZER_HOME')
     if synthesizer_path and synthesizer_path.is_dir():
       exist = True
-    if not exist:
-      self.set_attr('syn_local', False)
-    elif is_frozen:
+    if is_frozen:
       self.set_attr('syn_local', True)
+    elif not exist:
+      self.set_attr('syn_local', False)
 
   def clear(self):
     super().clear()
@@ -182,7 +183,7 @@ class RvxConfig():
   
   @property
   def is_frozen(self):
-    return self.freeze_tag_path.is_file()
+    return self.freeze_tag_path.is_file() or (not self.is_mini)
   
   @property
   def server_mode_path(self):
