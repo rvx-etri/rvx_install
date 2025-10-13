@@ -26,8 +26,8 @@ class RvxPathConfig(ConfigFileManager):
     super().__init__('rvx_path_config', file_path, None)
     self.allowed_set = frozenset(('python3_cmd', 'home_path', 'devkit_path','utility_path','local_setup_path', 'windows_binary_path', 'env_path', 'gui_path', 'ocd_path'))
     if self.check(self.allowed_set, exact=True):
-      assert self.get_attr('home_path')==home_path, (self.get_attr('home_path'),home_path)
-      assert self.get_attr('devkit_path')==devkit_path, (self.get_attr('devkit_path'),devkit_path)
+      assert self.get_attr('home_path')==home_path, f'\'{file_path}\' is broken'
+      assert self.get_attr('devkit_path')==devkit_path, f'\'{file_path}\' is broken'
     else:
       self.clear()
       self.set_attr('home_path', home_path)
