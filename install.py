@@ -28,6 +28,7 @@ from rvx_config import *
 from rvx_devkit import *
 from rvx_engine_log import *
 from rvx_mini_home import *
+from setup_repo import *
 
 debug_enable_filename = 'debug'
 
@@ -50,7 +51,8 @@ if __name__ == '__main__':
     if not args.cmd:
         assert 0
     elif args.cmd == 'prepare' or args.cmd == 'install':
-        cmd_list = ('windows_binary', 'gnome', 'ssh', 'misc', 'config')
+        cmd_list = ('windows_binary', 'gnome', 'ssh',
+                    'misc', 'config', 'symbolic_link')
     else:
         cmd_list = [args.cmd]
         if 'clean' in args.cmd:
@@ -164,6 +166,9 @@ if __name__ == '__main__':
             if is_linux:
                 make_executable(update_sciprt_file)
 
+        elif cmd == 'symbolic_link':
+            setup_imp_class_info(home_path, home_path/'rvx_install'/'mini_git')
+
         elif cmd == 'enable_debug':
             debug_enable_file = home_path / debug_enable_filename
             if not debug_enable_file.is_file():
@@ -215,7 +220,7 @@ if __name__ == '__main__':
         elif cmd == 'freeze':
             mini_home = RvxMiniHome(devkit)
             mini_home.freeze()
-        
+
         elif cmd == 'freeze_git':
             mini_home = RvxMiniHome(devkit)
             mini_home.freeze()
@@ -241,7 +246,7 @@ if __name__ == '__main__':
         elif cmd == 'compiler.uninstall':
             mini_home = RvxMiniHome(devkit)
             mini_home.uninstall_compiler()
-    
+
         elif cmd == 'synthesizer' or cmd == 'synthesizer.install':
             mini_home = RvxMiniHome(devkit)
             mini_home.install_synthesizer()

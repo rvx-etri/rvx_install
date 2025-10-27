@@ -55,11 +55,9 @@ gui:
 platform_gui:
 	@cd ./platform && make gui
 
-setup_mini_git:
-	@cd ./rvx_install && make setup_mini_git
-
-update_mini_git:
-	@cd ./rvx_install && make update_mini_git
+SETUP_CMD_LIST = setup_imp_class_info setup_repo update_repo
+${SETUP_CMD_LIST}:%:
+	@${PYTHON3_CMD} ./rvx_install/setup_repo.py -c $(*) -i ./rvx_install -r ${CURDIR}
 
 ########
 # fork #
@@ -68,6 +66,6 @@ update_mini_git:
 FORK_CMD_LIST=fork fork.f fork.u fork.fu fork.uf
 
 ${FORK_CMD_LIST}:%: synthesizer.download
-	@${PYTHON3_CMD} ./rvx_install/rvx_fork.py -cmd $(*) -i ${CURDIR} -o ${TARGET}
+	@${PYTHON3_CMD} ./rvx_install/fork_repo.py -cmd $(*) -o ${CURDIR} -t ${TARGET}
 
 .PHONY: ${PYTHON_CMD_LIST} _check_linux _check_mini_home

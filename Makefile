@@ -17,39 +17,8 @@
 # ****************************************************************************
 
 # DO NOT use this Makefile
-# Use Makefile at the upper directory.
+# Use Makefile in the upper directory.
 
 GIT_REMOTE_URL=git@bitbucket.org:kyuseung_han/rvx_install.git
 -include ${RVX_UTIL_HOME}/remove_git_history.mh
 -include ${RVX_ENV}/dev/rvx_dev_util.mh
-
-MINI_GIT=$(abspath ${CURDIR}/..)
-MINI_GIT_FILE_LIST = Makefile rvx_init.mh rvx_config.mh
-
-setup_mini_git: update_mini_git
-	cd ./mini_git && cp -f .gitignore README.md ${MINI_GIT}/
-	
-update_mini_git:
-	cd ./mini_git && cp -f ${MINI_GIT_FILE_LIST} ${MINI_GIT}/
-	cd ${MINI_GIT} && mkdir -p ./platform
-	cp -rf ./mini_git/platform/* ${MINI_GIT}/platform
-	if [ -L ${MINI_GIT}/imp_class_info ] ;	then \
-		make gen_link_for_imp_class_info ; \
-	else \
-		if [ -d ${MINI_GIT}/imp_class_info ] ;	then \
-			cp -f ./mini_git/imp_class_info/Makefile ${MINI_GIT}/imp_class_info/ ; \
-			cd ${MINI_GIT}/imp_class_info && make reimport ;\
-		else \
-			make gen_link_for_imp_class_info ; \
-		fi ; \
-	fi
-
-gen_link_for_imp_class_info:
-	cd ${MINI_GIT} && rm -rf imp_class_info
-	cd ${MINI_GIT} && ln -s ./rvx_install/mini_git/imp_class_info imp_class_info
-
-copy_imp_class_info:
-	cd ${MINI_GIT} && rm -rf imp_class_info
-	cp -r ./mini_git/imp_class_info/ ${MINI_GIT}
-
-.PHONY: _check_etri_home
