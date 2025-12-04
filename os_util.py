@@ -256,3 +256,8 @@ if __name__ =='__main__':
     print(' '.join(dir_list))
   else:
     assert 0, sys.argv[1]
+
+def is_process_running(process_name:str) -> bool:
+  assert is_linux
+  result = subprocess.run(["pgrep", "minicom"], stdout=subprocess.DEVNULL)
+  return result.returncode == 0
