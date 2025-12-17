@@ -167,6 +167,8 @@ if __name__ == '__main__':
                 make_executable(update_sciprt_file)
 
         elif cmd == 'symbolic_link':
+            if is_windows and (home_path/'imp_class_info').is_symlink():
+                (home_path/'imp_class_info').unlink()
             setup_imp_class_info(home_path, home_path/'rvx_install'/'mini_git')
 
         elif cmd == 'enable_debug':
