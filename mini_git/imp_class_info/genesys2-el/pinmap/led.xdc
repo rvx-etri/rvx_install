@@ -11,22 +11,11 @@
 ## IN ANY FORM, BY ANY MEANS, IN WHOLE OR IN PART, WITHOUT THE
 ## COMPLETE PRIOR WRITTEN PERMISSION OF ETRI.
 ## ****************************************************************************
-## 2017-01 : Kyuseung Han (han@etri.re.kr)
+## 2017-02 : Kyuseung Han (han@etri.re.kr)
 ## ****************************************************************************
 ## ****************************************************************************
 
-###########
-## reset ##
-###########
-
-set_property -dict { PACKAGE_PIN R19   IOSTANDARD LVCMOS33 } [get_ports { external_rstnn }]; #IO_0_14 Sch=cpu_resetn
-
-###########
-## clock ##
-###########
-
-set_property -dict { PACKAGE_PIN AD11  IOSTANDARD LVDS     } [get_ports { external_clk_0_pair }]; #IO_L12N_T1_MRCC_33 Sch=sysclk_n
-set_property -dict { PACKAGE_PIN AD12  IOSTANDARD LVDS     } [get_ports { external_clk_0 }]; #IO_L12P_T1_MRCC_33 Sch=sysclk_p
-
-create_clock -period 5.000 [get_ports external_clk_0]
-set_input_jitter [get_clocks -of_objects [get_ports external_clk_0]] 0.100
+set_property -dict { PACKAGE_PIN T28    IOSTANDARD LVCMOS33 } [get_ports { led_list[0] }]; #IO_L24N_T3_35 Sch=led[4]
+#set_property -dict { PACKAGE_PIN J5    IOSTANDARD LVCMOS33 } [get_ports { led_list[1] }]; #IO_25_35 Sch=led[5]
+#set_property -dict { PACKAGE_PIN T9    IOSTANDARD LVCMOS33 } [get_ports { led_list[2] }]; #IO_L24P_T3_A01_D17_14 Sch=led[6]
+#set_property -dict { PACKAGE_PIN T10   IOSTANDARD LVCMOS33 } [get_ports { led_list[3] }]; #IO_L24N_T3_A00_D16_14 Sch=led[7]

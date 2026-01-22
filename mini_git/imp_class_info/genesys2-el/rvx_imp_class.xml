@@ -1,0 +1,24 @@
+<?xml version="1.0" ?>
+<rvx>
+  <imp_class_list>
+    <imp_class>
+      <name>genesys2-el</name>
+      <display_name>Genesys2-EL</display_name>
+      <type>fpga</type>
+      <jtag_khz>10000</jtag_khz>
+      <fpga_info>
+        <part>xc7k325tffg900-2</part>
+        <image_size>11443722</image_size>
+        <flash_interface_type>spix4</flash_interface_type>
+        <cfg_mem>s25fl256sxxxxxx0-spi-x1_x2_x4</cfg_mem>
+        <dram>ddr3</dram>
+        <extenral_clk_mhz>200d</extenral_clk_mhz>
+        <clk_dram_sys_mhz>200</clk_dram_sys_mhz>
+        <clk_fan_khz>25</clk_fan_khz>
+        <flash_sck_uses_startupe2>True</flash_sck_uses_startupe2>
+      </fpga_info>
+      <usb2jtag>0403:6011</usb2jtag>
+      <usb2uart>0403:6011:01</usb2uart>
+    </imp_class>
+  </imp_class_list>
+</rvx>
