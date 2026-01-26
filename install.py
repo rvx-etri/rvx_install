@@ -273,7 +273,7 @@ if __name__ == '__main__':
                             'pyelftools', 'configparser')
             for package in package_list:
                 result = run_shell_cmd(
-                    f'{config.python3_cmd} -m pip show {package}', asserts_when_error=False)
+                    f'{config.python3_cmd} -m pip show {package}', home_path, asserts_when_error=False)
                 if result.returncode == 0:
                     stdout = result.stdout.replace('\r', '')
                     print(stdout.split('\n')[0:2])
@@ -291,7 +291,7 @@ if __name__ == '__main__':
 
             if is_linux:
                 print('\n## Linux locale check ##')
-                result = run_shell_cmd('locale', asserts_when_error=False)
+                result = run_shell_cmd('locale', home_path, asserts_when_error=False)
                 stdout = result.stdout.replace('\r', '')
                 print(stdout)
 
@@ -307,7 +307,7 @@ if __name__ == '__main__':
             execute_shell_cmd('java -version', home_path)
             if is_windows:
                 print('\n## sh check ##')
-                result = run_shell_cmd('where sh', asserts_when_error=False)
+                result = run_shell_cmd('where sh', home_path, asserts_when_error=False)
                 if result.returncode == 0:
                     stdout = result.stdout.replace('\r', '')
                     print(stdout)
@@ -316,6 +316,11 @@ if __name__ == '__main__':
                     print('Please update Path NOT to find \"sh\" binary')
                 else:
                     print('OKAY')
+            
+            print('\n## repo status ##')
+            result = run_shell_cmd('git status', home_path, asserts_when_error=False)
+            stdout = result.stdout.replace('\r', '')
+            print(stdout)
 
             print('\n## RVX version ##')
             mini_home = RvxMiniHome(devkit)
