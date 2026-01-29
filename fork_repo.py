@@ -129,7 +129,7 @@ if __name__ == '__main__':
 
         if add_as_submodule:
             run_shell_cmd(
-                f'git submodule add -f {original_path / rvx_submodule}', target_path)
+                f'git -c protocol.file.allow=always submodule add -f {original_path / rvx_submodule}', target_path)
             url = f'https://github.com/rvx-etri/{rvx_submodule}.git'
             run_shell_cmd(
                 f'git config -f .gitmodules submodule.{rvx_submodule}.url \"{url}\"', target_path)
