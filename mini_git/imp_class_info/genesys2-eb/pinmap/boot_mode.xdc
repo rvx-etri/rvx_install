@@ -18,6 +18,6 @@
 # set_property -dict { PACKAGE_PIN A10   IOSTANDARD LVCMOS33 } [get_ports { boot_mode[0] }]; # SW3
 # set_property -dict { PACKAGE_PIN C10   IOSTANDARD LVCMOS33 } [get_ports { boot_mode[1] }]; # SW2
 
-set_property -dict { PACKAGE_PIN G19   IOSTANDARD LVCMOS12 } [get_ports { boot_mode[0] }]; #IO_0_17 Sch=sw[0]
-set_property -dict { PACKAGE_PIN G25   IOSTANDARD LVCMOS12 } [get_ports { boot_mode[1] }]; #IO_25_16 Sch=sw[1]
+set_property -dict { PACKAGE_PIN G19   IOSTANDARD LVCMOS18 } [get_ports { boot_mode[0] }]; #IO_0_17 Sch=sw[0]
+set_property -dict { PACKAGE_PIN G25   IOSTANDARD LVCMOS18 } [get_ports { boot_mode[1] }]; #IO_25_16 Sch=sw[1]
 

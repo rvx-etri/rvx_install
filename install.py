@@ -326,6 +326,8 @@ if __name__ == '__main__':
             mini_home = RvxMiniHome(devkit)
             print(mini_home.home_path)
             print(mini_home.version)
+            if mini_home.is_synched:
+                print(f'Expires on {mini_home.expire_date}')
 
         else:
             assert 0

@@ -2,8 +2,8 @@
 <rvx>
   <imp_class_list>
     <imp_class>
-      <name>genesys2-el</name>
-      <display_name>Genesys2-EL</display_name>
+      <name>genesys2-eb</name>
+      <display_name>Genesys2-EB</display_name>
       <type>fpga</type>
       <jtag_khz>10000</jtag_khz>
       <fpga_info>

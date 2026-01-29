@@ -100,10 +100,24 @@ class RvxMiniHome():
     return self.local_sync_config.attr_dict if self.local_sync_config else {}
   
   @property
+  def is_synched(self):
+    return 'rvx_version.date' in self.local_sync_config_dict.keys() and 'rvx_version.commit' in self.local_sync_config_dict.keys() and 'rvx_library' in self.local_sync_config_dict.keys()
+  
+  @property
   def version(self):
     result = 'Not synced'
-    if 'rvx_version.date' in self.local_sync_config_dict.keys() and 'rvx_version.commit' in self.local_sync_config_dict.keys() and 'rvx_library' in self.local_sync_config_dict.keys():
+    if self.is_synched:
       result = '_'.join((self.local_sync_config_dict['rvx_version.date'],self.local_sync_config_dict['rvx_version.commit'],self.local_sync_config_dict['rvx_library']))
+    return result
+  
+  @property
+  def expire_date(self):
+    result = 'Not synced'
+    if self.is_synched:
+      version_date = self.local_sync_config_dict['rvx_version.date']
+      result = datetime.date.fromisoformat(version_date[:10])
+      result += datetime.timedelta(days=365*3)
+      result = str(result)
     return result
   
   @property
