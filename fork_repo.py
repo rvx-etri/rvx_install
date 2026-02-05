@@ -128,11 +128,11 @@ if __name__ == '__main__':
             add_as_submodule = False
 
         if add_as_submodule:
-            run_shell_cmd(
-                f'git -c protocol.file.allow=always submodule add -f {original_path / rvx_submodule}', target_path)
             url = f'https://github.com/rvx-etri/{rvx_submodule}.git'
-            run_shell_cmd(
-                f'git config -f .gitmodules submodule.{rvx_submodule}.url \"{url}\"', target_path)
+            run_shell_cmd(f'git submodule add -f {url}', target_path)
+            run_shell_cmd(f'git fetch', target_path/rvx_submodule)
+            repo_version = get_git_version(original_path/rvx_submodule)
+            run_shell_cmd(f'git checkout {repo_version}', target_path/rvx_submodule)
             remove_directory(target_path/rvx_submodule)
             copy_directory(original_path/rvx_submodule,
                            target_path/rvx_submodule)
