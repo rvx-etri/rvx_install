@@ -52,7 +52,7 @@ if __name__ == '__main__':
         assert 0
     elif args.cmd == 'prepare' or args.cmd == 'install':
         cmd_list = ('windows_binary', 'gnome', 'ssh',
-                    'misc', 'config', 'symbolic_link')
+                    'misc', 'config', 'symbolic_link', 'license')
     else:
         cmd_list = [args.cmd]
         if 'clean' in args.cmd:
@@ -170,6 +170,16 @@ if __name__ == '__main__':
             if is_windows and (home_path/'imp_class_info').is_symlink():
                 (home_path/'imp_class_info').unlink()
             setup_imp_class_info(home_path, home_path/'rvx_install'/'mini_git')
+
+        elif cmd == 'license':
+            mini_home = RvxMiniHome(devkit)
+            if is_windows:
+                mini_home.unfreeze()
+            if mini_home.is_frozen:
+                print(f'[INFO] This repository uses an RVX-free license')
+            else:
+                print(f'[INFO] This repository requires an RVX-cloud license (i.e. server information)')
+                print(f'[INFO] https://riscvexpress.github.io/rvx-web-license.html')
 
         elif cmd == 'enable_debug':
             debug_enable_file = home_path / debug_enable_filename
@@ -291,7 +301,8 @@ if __name__ == '__main__':
 
             if is_linux:
                 print('\n## Linux locale check ##')
-                result = run_shell_cmd('locale', home_path, asserts_when_error=False)
+                result = run_shell_cmd(
+                    'locale', home_path, asserts_when_error=False)
                 stdout = result.stdout.replace('\r', '')
                 print(stdout)
 
@@ -307,7 +318,8 @@ if __name__ == '__main__':
             execute_shell_cmd('java -version', home_path)
             if is_windows:
                 print('\n## sh check ##')
-                result = run_shell_cmd('where sh', home_path, asserts_when_error=False)
+                result = run_shell_cmd(
+                    'where sh', home_path, asserts_when_error=False)
                 if result.returncode == 0:
                     stdout = result.stdout.replace('\r', '')
                     print(stdout)
@@ -316,9 +328,10 @@ if __name__ == '__main__':
                     print('Please update Path NOT to find \"sh\" binary')
                 else:
                     print('OKAY')
-            
+
             print('\n## repo status ##')
-            result = run_shell_cmd('git status', home_path, asserts_when_error=False)
+            result = run_shell_cmd(
+                'git status', home_path, asserts_when_error=False)
             stdout = result.stdout.replace('\r', '')
             print(stdout)
 
