@@ -5,9 +5,18 @@ import argparse
 from configure_template import *
 
 
+def generate_symbolic_link(repo_path: Path, git_ref_path: Path) -> None:
+    target = git_ref_path / "imp_class_info"
+    link = repo_path / "imp_class_info"
+
+    rel_target = target.relative_to(repo_path)
+    link.symlink_to(rel_target)
+
+
 def setup_imp_class_info(repo_path: Path, git_ref_path: Path) -> None:
     if (repo_path/'imp_class_info').is_symlink():
-        pass
+        (repo_path/'imp_class_info').unlink(missing_ok=True)
+        generate_symbolic_link(repo_path, git_ref_path)
     elif (repo_path/'imp_class_info').is_dir():
         repo_dir_names = [p.name for p in (
             repo_path/'imp_class_info').iterdir() if p.is_dir()]
@@ -31,8 +40,7 @@ def setup_imp_class_info(repo_path: Path, git_ref_path: Path) -> None:
             copy_directory(git_ref_path/'imp_class_info',
                            repo_path/'imp_class_info')
         else:
-            os.symlink(git_ref_path/'imp_class_info',
-                       repo_path/'imp_class_info')
+            generate_symbolic_link(repo_path, git_ref_path)
 
 
 def setup_repo(repo_path: Path, git_ref_path: Path) -> None:
