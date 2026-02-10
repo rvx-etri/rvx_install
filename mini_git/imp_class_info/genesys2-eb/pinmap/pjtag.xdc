@@ -26,7 +26,7 @@
 
 #FMC
 set_property -dict { PACKAGE_PIN A16   IOSTANDARD LVCMOS18 } [get_ports { pjtag_rtdo }];    # LA_30P
-set_property -dict { PACKAGE_PIN L17   IOSTANDARD LVCMOS18 } [get_ports { pjtag_rtrstnn }]; # LA_19P # Not Used
+set_property -dict { PACKAGE_PIN G20   IOSTANDARD LVCMOS18 } [get_ports { pjtag_rtrstnn }]; # LA_24N
 set_property -dict { PACKAGE_PIN A17   IOSTANDARD LVCMOS18 } [get_ports { pjtag_rtck }];    # LA_30N
 set_property -dict { PACKAGE_PIN J19   IOSTANDARD LVCMOS18 } [get_ports { pjtag_rtdi }];    # LA_28P
 set_property -dict { PACKAGE_PIN H19   IOSTANDARD LVCMOS18 } [get_ports { pjtag_rtms }];    # LA_28N
