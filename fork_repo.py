@@ -132,7 +132,8 @@ if __name__ == '__main__':
             run_shell_cmd(f'git submodule add -f {url}', target_path)
             run_shell_cmd(f'git fetch', target_path/rvx_submodule)
             repo_version = get_git_version(original_path/rvx_submodule)
-            run_shell_cmd(f'git checkout {repo_version}', target_path/rvx_submodule)
+            run_shell_cmd(
+                f'git checkout {repo_version}', target_path/rvx_submodule)
             remove_directory(target_path/rvx_submodule)
             copy_directory(original_path/rvx_submodule,
                            target_path/rvx_submodule)
@@ -206,7 +207,10 @@ if __name__ == '__main__':
     # update client_info
     new_client_sync_config_path = target_path / \
         devkit.client_sync_config_path.relative_to(original_path)
-    run_shell_cmd(
-        f'{config.python3_cmd} {config.utility_path}/manage_version_info.py -name synced_before -value false -o {new_client_sync_config_path}', original_path)
-    run_shell_cmd(
-        f'{config.python3_cmd} {config.utility_path}/manage_version_info.py -name synced_from -value {get_git_url(original_path)} -o {new_client_sync_config_path}', original_path)
+    if new_client_sync_config_path.is_file():
+        manage_version_info_path = original_path / \
+            'rvx_install' / 'manage_version_info.py'
+        run_shell_cmd(
+            f'{config.python3_cmd} {manage_version_info_path} -name synced_before -value false -o {new_client_sync_config_path}', original_path)
+        run_shell_cmd(
+            f'{config.python3_cmd} {manage_version_info_path} -name synced_from -value {get_git_url(original_path)} -o {new_client_sync_config_path}', original_path)

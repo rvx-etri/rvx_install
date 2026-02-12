@@ -274,7 +274,7 @@ def get_dir_list(path: Path):
 
 def is_process_running(process_name: str) -> bool:
     assert is_linux
-    result = subprocess.run(["pgrep", "minicom"], stdout=subprocess.DEVNULL)
+    result = subprocess.run(["pgrep", process_name], stdout=subprocess.DEVNULL)
     return result.returncode == 0
 
 
