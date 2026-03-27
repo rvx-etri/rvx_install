@@ -42,10 +42,10 @@ def setup_imp_class_info(repo_path: Path, git_ref_path: Path) -> None:
 
 
 def setup_repo(repo_path: Path, git_ref_path: Path) -> None:
-    for filename in ('rvx_init.mh', 'rvx_config.mh'):
+    for filename in ('rvx_init.mh', 'rvx_config.mh','Makefile', '.gitignore'):
         copy_file(git_ref_path/filename, repo_path/filename)
 
-    for filename in ('Makefile', '.gitignore', 'README.md'):
+    for filename in ('README.md',):
         if not (repo_path / filename).is_file():
             copy_file(git_ref_path/filename, repo_path/filename)
 

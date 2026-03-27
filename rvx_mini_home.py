@@ -82,16 +82,16 @@ class RvxMiniHome():
         return self.home_path / 'sync'
 
     @property
-    def sync_gitignore_path(self):
-        return self.home_path / 'sync' / '.gitignore'
-
-    @property
     def tool_config_path(self):
         return self.home_path / '.rvx_tool_config'
 
     @property
     def path_config_path(self):
         return self.home_path / '.rvx_path_config'
+
+    @property
+    def manual_path(self):
+        return self.home_path / 'manual'
 
     @property
     def local_sync_config_dict(self):
@@ -127,6 +127,16 @@ class RvxMiniHome():
     def get_activation_info_path(path: Path):
         return path / 'client_info.xml'
 
+    @staticmethod
+    def set_gitignore_all(target_path: Path):
+        gitignore_path = target_path / '.gitignore'
+        gitignore_path.write_text('*')
+
+    @staticmethod
+    def unset_gitignore(target_path: Path):
+        gitignore_path = target_path / '.gitignore'
+        gitignore_path.unlink(missing_ok=True)
+
     @property
     def get_sync_info_path(self):
         return RvxMiniHome.get_activation_info_path(self.sync_path)
@@ -154,17 +164,26 @@ class RvxMiniHome():
             required = False
         return required
 
-    def extract_module(self, module_name: str):
+    def _extract_rvx_module(self, module_name: str):
+        tar_path = self.sync_path / f'{module_name}.tar.gz'
+        assert tar_path.is_file(), tar_path
+        extracted_path = self.sync_path / module_name
+        remove_directory(extracted_path)
+        extract_file(tar_path)
+
+    def _activate_rvx_module(self, module_name: str):
         target_path = self.home_path / module_name
         required = self.is_activation_required(
             target_path, f'{module_name}.commit')
         if required:
             extracted_path = self.sync_path / module_name
-            remove_directory(extracted_path)
+            if not extracted_path.is_dir():
+                self._extract_rvx_module(module_name)
+            assert extracted_path.is_dir(), extracted_path
             remove_directory(target_path)
-            extract_file(self.sync_path / f'{module_name}.tar.gz')
-            move_directory(extracted_path, target_path)
+            copy_directory(extracted_path, target_path)
             self.set_module_activated(target_path)
+            RvxMiniHome.set_gitignore_all(target_path)
         else:
             pass
             # print(module_name)
@@ -253,17 +272,18 @@ class RvxMiniHome():
         if self.example_path.is_dir():
             self._install_example()
 
-    def _download_synthesizer(self):
+    def _sync_synthesizer(self):
         assert is_linux
         assert self.sync_path.is_dir()
         if not self.synthesizer_tar_path.is_file():
             self.devkit.get_remote_handler().request_sftp_get(
                 remote_synthesizer_filename, '.', self.sync_path)
+        if not (self.sync_path/'rvx_synthesizer_obfuscated').is_dir():
+            self._extract_rvx_module('rvx_synthesizer_obfuscated')
 
-    def _install_synthesizer(self):
+    def _activate_synthesizer(self):
         assert is_linux and self.is_sync_activated
-        self._download_synthesizer()
-        self.extract_module('rvx_synthesizer_obfuscated')
+        self._activate_rvx_module('rvx_synthesizer_obfuscated')
         self.tool_config_path.unlink(missing_ok=True)
 
     def install_synthesizer(self):
@@ -275,7 +295,8 @@ class RvxMiniHome():
         elif not self.is_sync_activated:
             self.devkit.add_log(f'Synthesizer Fail: Activation First', 'error')
         else:
-            self._install_synthesizer()
+            self._sync_synthesizer()
+            self._activate_synthesizer()
             self.devkit.add_log(f'Synthesizer Success', 'done')
 
     def _uninstall_synthesizer(self):
@@ -290,8 +311,8 @@ class RvxMiniHome():
     def _update_synthesizer_if_needed(self):
         if is_windows:
             self._uninstall_synthesizer()
-        elif self.is_frozen or self.synthesizer_path.is_dir():
-            self._install_synthesizer()
+        else:
+            self._activate_synthesizer()
 
     def _sync(self):
         is_install_complete = True
@@ -333,6 +354,14 @@ class RvxMiniHome():
             remove_directory(self.sync_path)
             self.devkit.get_remote_handler().extract_tar_file(
                 remote_sync_filename, '.', self.home_path)
+            module_name_list = ('rvx_util', 'rvx_ssw',
+                                'rvx_hwlib', 'rvx_devkit')
+            for module_name in module_name_list:
+                self._extract_rvx_module(module_name)
+
+            if is_linux:
+                self._sync_synthesizer()
+
             self.local_sync_config = remote_sync_config
             self.local_sync_config_dict['synced_before'] = 'true'
             # self.local_sync_config_dict['synced_from'] = self.devkit.config.ip_address
@@ -358,9 +387,9 @@ class RvxMiniHome():
 
     def _activate(self):
         # module
-        module_list = ('rvx_util', 'rvx_ssw', 'rvx_hwlib', 'rvx_devkit')
-        for module_name in module_list:
-            self.extract_module(module_name)
+        module_name_list = ('rvx_util', 'rvx_ssw', 'rvx_hwlib', 'rvx_devkit')
+        for module_name in module_name_list:
+            self._activate_rvx_module(module_name)
 
         # local_setup
         local_setup_path = self.home_path / 'local_setup'
@@ -375,19 +404,20 @@ class RvxMiniHome():
             remove_directory(fpga_component)
 
         # manual
-        manual_path = self.home_path / 'manual'
-        remove_directory(manual_path)
-        manual_path.mkdir()
-        for manual in (self.home_path/'rvx_devkit'/'env'/'manual').glob('*'):
-            copy_file(manual, self.home_path/'manual'/manual.name)
-        for manual in (self.home_path/'rvx_install').glob('*_manual*.pdf'):
-            if not (self.home_path/'manual'/manual.name).exists():
-                copy_file(manual, self.home_path/'manual'/manual.name)
+        remove_directory(self.manual_path)
+        self.manual_path.mkdir()
+        for each_manual in (self.home_path/'rvx_devkit'/'env'/'manual').glob('*'):
+            copy_file(each_manual, self.manual_path/each_manual.name)
+        for each_manual in (self.home_path/'rvx_install').glob('*_manual*.pdf'):
+            if not (self.manual_path/each_manual.name).exists():
+                copy_file(each_manual, self.manual_path/each_manual.name)
+        RvxMiniHome.set_gitignore_all(self.manual_path)
 
-        self._update_compiler_if_needed()
+        # compiler
         self._update_synthesizer_if_needed()
+        self._update_compiler_if_needed()
         self._update_example_if_exist()
-        self._update_sync_gitignore()
+        self._update_gitignore()
 
     def activate(self):
         self.devkit.add_new_job('activate', True)
@@ -398,45 +428,57 @@ class RvxMiniHome():
         else:
             self.devkit.add_log(f'Activate Fail: No Sync File', 'done')
 
-    def resync(self):
+    def _clean_activated(self):
         if not self.is_frozen:
             remove_directory(self.sync_path)
+        remove_directory(self.home_path / 'rvx_util')
+        remove_directory(self.home_path / 'rvx_hwlib')
+        remove_directory(self.home_path / 'rvx_ssw')
+        remove_directory(self.home_path / 'rvx_devkit')
+        remove_directory(self.home_path / 'rvx_synthesizer_obfuscated')
+        run_shell_cmd('git checkout --force ./rvx_hwlib', self.home_path,
+                      stderr=subprocess.DEVNULL, prints_when_error=False, asserts_when_error=False)
+        remove_directory(self.manual_path)
+
+    def resync(self):
+        self._clean_activated()
         run_shell_cmd(self.devkit.get_remote_handler(
         ).make_ssh_cmd('setup_rvx_private_force'))
         self.sync()
         self.devkit.engine_log.current_job.name = 'resync'
 
-    def _update_sync_gitignore(self):
+    def _update_gitignore(self):
         if self.is_frozen:
-            self.sync_gitignore_path.unlink(missing_ok=True)
+            gitignore_path = self.sync_path / '.gitignore'
+            line_list = []
+            line_list.append('*.gz')
+            line_list.append('rvx_hwlib*')
+            line_list.append('!rvx_hwlib.tar.gz')
+            gitignore_path.write_text('\n'.join(line_list))
+
         else:
-            self.sync_gitignore_path.parent.mkdir(exist_ok=True)
-            self.sync_gitignore_path.write_text('*')
+            self.sync_path.mkdir(exist_ok=True)
+            run_shell_cmd('git rm -rf .gitignore', self.sync_path, stderr=subprocess.DEVNULL,
+                          prints_when_error=False, asserts_when_error=False)
+            RvxMiniHome.set_gitignore_all(self.sync_path)
 
     def freeze(self):
         self._sync()
-        self._download_synthesizer()
+        self._sync_synthesizer()
         self.devkit.config.freeze_tag_path.touch(exist_ok=True)
         self.devkit.config.path_config_path.unlink(missing_ok=True)
-        self._update_sync_gitignore()
+        self._update_gitignore()
 
     def unfreeze(self):
         self.devkit.config.freeze_tag_path.unlink(missing_ok=True)
         self.devkit.config.path_config_path.unlink(missing_ok=True)
-        self._update_sync_gitignore()
+        self._update_gitignore()
 
     def clean(self):
         preserved_file_list = frozenset(('.git', '.gitignore', '.gitmodules', 'Makefile', 'README.md', 'rvx_setup.sh', 'rvx_each.mh', 'rvx_init.mh',
                                         'rvx_config.mh', 'rvx_python_config.mh', 'debug', self.devkit.config.freeze_tag_path.name, 'python3.bat', 'imp_class_info'))
 
-        if not self.is_frozen:
-            remove_directory(self.home_path / 'sync')
-            remove_directory(self.home_path / 'env')
-        remove_directory(self.home_path / 'rvx_util')
-        remove_directory(self.home_path / 'rvx_hwlib')
-        remove_directory(self.home_path / 'rvx_ssw')
-        run_shell_cmd('git checkout --force ./rvx_hwlib', self.home_path,
-                      stderr=subprocess.DEVNULL, prints_when_error=False, asserts_when_error=False)
+        self._clean_activated()
         remove_directory(self.home_path / 'rvx_install' / '__pycache__')
         remove_directory(self.devkit.config.local_setup_path)
 

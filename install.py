@@ -159,9 +159,9 @@ if __name__ == '__main__':
             line_list.append('make check')
             line_list.append('make sync')
             if is_linux:
-                update_sciprt_file = home_path / 'update.sh'
+                update_sciprt_file = home_path / 'rvx_update.sh'
             else:
-                update_sciprt_file = home_path / 'update.bat'
+                update_sciprt_file = home_path / 'rvx_update.bat'
             update_sciprt_file.write_text('\n'.join(line_list))
             if is_linux:
                 make_executable(update_sciprt_file)
